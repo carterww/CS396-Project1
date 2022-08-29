@@ -1,13 +1,26 @@
+import os
+from django.conf import settings
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.contrib import messages
+from django.http import FileResponse
 
 from .forms import CreateUserForm
 
 # Create your views here.
+
+# TODO view for testing that displays image from media folder
+def display_images(request, image_name) :
+    base_url = getattr(settings, "MEDIA_URL", None)
+    base_url = '.' + base_url
+    try :
+        img = open(os.path.join(base_url, image_name), 'rb')
+    except Exception :
+        raise Http404("This image does not exist")
+    return FileResponse(img)
 
 
 def login_(request) :

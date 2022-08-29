@@ -9,4 +9,5 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('logout/', views.logout_user, name='logout'),
     path('', views.index, name='index'),
+    path('media/<str:image_name>/', views.display_images, name='display_images'),
 ]
