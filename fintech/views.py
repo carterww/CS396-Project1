@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.contrib import messages
 from django.http import FileResponse
 
+from .models import Board, DiscussionTopic, Post
 from .forms import CreateUserForm
 
 # Create your views here.
@@ -59,7 +60,37 @@ def register(request) :
     return render(request, 'fintech/register.html', context)
 
 def index(request) :
-    return render(request, 'fintech/index.html', {})
+    boards = Board.objects.all()
+    topics = DiscussionTopic.objects.all()
+
+    context = {
+        'boards': boards,
+        'topics': topics,
+    }
+
+
+    return render(request, 'fintech/index.html', context)
+
+def view_post(request, topic_id, post_id) :
+    topic = DiscussionTopic.objects.get(id=topic_id)
+    post = Post.objects.get(FK_discussiontopic_post=topic, id=post_id)
+
+    context = {
+        'post': post,
+    }
+
+    return render(request, 'fintech/post.html', context)
+
+def view_topic(request, topic_id) :
+    topic = DiscussionTopic.objects.get(id=topic_id)
+    posts = Post.objects.filter(FK_discussiontopic_post=topic)
+
+    context = {
+        'topic': topic,
+        'posts':posts,
+    }
+
+    return render(request, 'fintech/topic.html', context)
 
 def logout_user(request) :
     logout(request)

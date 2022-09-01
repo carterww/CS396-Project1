@@ -1,0 +1,9 @@
+<h1>
+    {{ topic.topic_name }}
+</h1>
+
+{% for post in posts %}
+    <a href="/topic/{{topic.id}}/{{post.id}}/"><p>
+        {{post.title}}
+    </p></a>
+{% endfor %}
