@@ -13,4 +13,23 @@
 <p>
     {{post.content_text}}
 </p>
+<form method="POST" action="/topic/{{topic_id}}/{{post_id}}/postcomment/">
+    {% csrf_token %}
+    <label for="create_comment">Post a Comment</label>
+    <br/>
+    <textarea name="create_comment" cols="50" rows="4" maxlength="255" required></textarea>
+    <br/>
+    <input type="submit">
+</form>
+
+<h2>
+    Comments
+</h2>
+{% for comment in comments %}
+<p>
+    <b>{{comment.FK_user_comment}}</b>
+    <br/>
+    {{comment.content_text}}
+</p>
+{% endfor %}
 

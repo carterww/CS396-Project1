@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.contrib import messages
 from django.http import FileResponse
 
-from .models import Board, DiscussionTopic, Post
+from .models import Board, DiscussionTopic, Post, Comment
 from .forms import CreateUserForm
 
 # Create your views here.
@@ -74,12 +74,60 @@ def index(request) :
 def view_post(request, topic_id, post_id) :
     topic = DiscussionTopic.objects.get(id=topic_id)
     post = Post.objects.get(FK_discussiontopic_post=topic, id=post_id)
+    comments = Comment.objects.filter(FK_post_comment=post)
 
     context = {
         'post': post,
+        'comments': comments,
+        'topic_id': topic_id,
+        'post_id': post_id,
     }
 
     return render(request, 'fintech/post.html', context)
+
+def post_comment(request, topic_id, post_id) :
+    url = '/topic/' + str(topic_id) + '/' + str(post_id) + '/'
+
+    if request.method != 'POST' :
+        return redirect(url)
+
+    args = {
+        'content_text': request.POST.get('create_comment'),
+        'FK_post_comment' : Post.objects.get(id=post_id),
+        'FK_user_comment' : request.user,
+    }
+    comment = Comment(**args)
+    comment.save()
+
+    context = {
+
+    }
+
+    return redirect(url)
+
+def create_post(request, topic_id) :
+    if request.method == 'POST' :
+        post_title = request.POST.get('post_title')
+        content = request.POST.get('post_content')
+        user = request.user
+        topic = DiscussionTopic.objects.get(id=topic_id)
+
+        args = {
+            'title': post_title,
+            'content_text': content,
+            'FK_user_post': user,
+            'FK_discussiontopic_post': topic,
+        }
+        new_post = Post(**args)
+        new_post.save()
+
+        return redirect('/topic/' + str(topic_id) + "/" + str(new_post.id) + "/")
+
+    context= {
+
+    }
+
+    return render(request, 'fintech/create_post.html', context)
 
 def view_topic(request, topic_id) :
     topic = DiscussionTopic.objects.get(id=topic_id)
