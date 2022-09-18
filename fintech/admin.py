@@ -7,7 +7,7 @@ from .models import *
 admin.site.register(DiscussionTopic)
 admin.site.register(Post)
 admin.site.register(Comment)
-admin.site.register(Document)
+admin.site.register(DocumentFile)
 
 if settings.DEBUG == True :
     admin.site.register(Board)

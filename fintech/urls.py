@@ -12,6 +12,6 @@ urlpatterns = [
     path('topic/<int:topic_id>/<int:post_id>/', views.view_post, name='view_post'),
     path('topic/<int:topic_id>/createpost/', views.create_post, name="create_post"),
     path('topic/<int:topic_id>/', views.view_topic, name='view_topic'),
-    path('media/<str:image_name>/', views.display_images, name='display_images'),
+    path('topic/<int:topic_id>/<int:post_id>/media/<str:image_name>/', views.display_images, name='display_images'),
     path('topic/<int:topic_id>/<int:post_id>/postcomment/', views.post_comment, name="post_comment"),
 ]

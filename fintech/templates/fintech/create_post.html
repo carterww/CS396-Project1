@@ -1,4 +1,4 @@
-<form method="POST" action="">
+<form method="POST" action="" enctype="multipart/form-data">
     {% csrf_token %}
 
     <label for="post_title">Title</label>
@@ -7,6 +7,9 @@
     <label for="post_content">Summary</label>
     <input type="text" name="post_content">
 
+    <input name="content" type="file" multiple>
+
+    <br/>
     <input type="submit" name="submit_post">
 
 

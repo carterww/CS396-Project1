@@ -7,16 +7,17 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.contrib import messages
 from django.http import FileResponse
+from django.core.files.storage import FileSystemStorage
 
-from .models import Board, DiscussionTopic, Post, Comment
-from .forms import CreateUserForm
+from .models import Board, DiscussionTopic, Post, Comment, DocumentFile
+from .forms import CreateUserForm, FileForm
 
 # Create your views here.
 
 # TODO view for testing that displays image from media folder
-def display_images(request, image_name) :
+def display_images(request, topic_id, post_id, image_name) :
     base_url = getattr(settings, "MEDIA_URL", None)
-    base_url = '.' + base_url
+    base_url = '.' + base_url + str(topic_id) + '/' + str(post_id) + '/' + str(request.user.id) + '/'
     try :
         img = open(os.path.join(base_url, image_name), 'rb')
     except Exception :
@@ -75,12 +76,15 @@ def view_post(request, topic_id, post_id) :
     topic = DiscussionTopic.objects.get(id=topic_id)
     post = Post.objects.get(FK_discussiontopic_post=topic, id=post_id)
     comments = Comment.objects.filter(FK_post_comment=post)
+    files = DocumentFile.objects.filter(FK_post_document=post)
 
     context = {
         'post': post,
         'comments': comments,
         'topic_id': topic_id,
         'post_id': post_id,
+        'files':files,
+        'user':request.user,
     }
 
     return render(request, 'fintech/post.html', context)
@@ -111,6 +115,7 @@ def create_post(request, topic_id) :
         content = request.POST.get('post_content')
         user = request.user
         topic = DiscussionTopic.objects.get(id=topic_id)
+        files = request.FILES.getlist('content')
 
         args = {
             'title': post_title,
@@ -121,13 +126,23 @@ def create_post(request, topic_id) :
         new_post = Post(**args)
         new_post.save()
 
+        for file in files :
+            handle_uploaded_file(file, str(topic_id), str(new_post.id), str(user.id))
+
+        for file in files :
+            new_document = DocumentFile(content=file.name, FK_user_document=user, FK_post_document=new_post)
+            new_document.save()
+
         return redirect('/topic/' + str(topic_id) + "/" + str(new_post.id) + "/")
-
     context= {
-
+        'form' : FileForm(request.POST, request.FILES)
     }
 
     return render(request, 'fintech/create_post.html', context)
+
+def handle_uploaded_file(f, topic_id, post_id, user_id):  
+    fs = FileSystemStorage('media/' + topic_id + '/' + post_id + '/' + user_id + '/')
+    filename = fs.save(f.name, f)
 
 def view_topic(request, topic_id) :
     topic = DiscussionTopic.objects.get(id=topic_id)

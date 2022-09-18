@@ -13,6 +13,13 @@
 <p>
     {{post.content_text}}
 </p>
+{% for file in files %}
+<a href="media/{{ file.content }}">
+    <p>{{ file.content }}</p>
+</a>
+
+{% endfor %}
+
 <form method="POST" action="/topic/{{topic_id}}/{{post_id}}/postcomment/">
     {% csrf_token %}
     <label for="create_comment">Post a Comment</label>

@@ -28,7 +28,7 @@ class Comment(models.Model) :
     FK_post_comment = models.ForeignKey(Post, on_delete=models.CASCADE)
     FK_user_comment = models.ForeignKey(User, on_delete=models.CASCADE)
 
-class Document(models.Model) :
+class DocumentFile(models.Model) :
     #using auto generated primary key
     content = models.FileField()
     FK_user_document = models.ForeignKey(User, on_delete=models.CASCADE)
