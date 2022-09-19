@@ -42,35 +42,45 @@ def login_(request) :
             messages.info(request, 'Username or password not found')
 
     context = {}
-    return render(request, 'fintech/login.html', context)
+    return render(request, 'test/login.html', context)
 
 def register(request) :
     if request.user.is_authenticated :
         return redirect('fintech:index')
-
-    form = CreateUserForm()
+    
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+    password_validation = request.POST.get('passwordConfirm')
 
     if request.method == 'POST' :
-        form = CreateUserForm(request.POST)
-        if form.is_valid() :
-            form.save()
-            messages.success(request, 'Account was successfully registered')
-            return redirect('fintech:login')
+        if password_validation != password :
+            messages.error(request, 'Passwords do not match')
+            return redirect('fintech:register')
+        user = User.objects.create_user(username=username, password=password)
+        messages.success(request, 'Account was successfully registered')
+        return redirect('fintech:login')
+    context = {
 
-    context = {'form':form}
-    return render(request, 'fintech/register.html', context)
+    }
+    return render(request, 'test/register.html', context)
 
 def index(request) :
     boards = Board.objects.all()
     topics = DiscussionTopic.objects.all()
+    some_posts = []
+    i = 0;
+    for topic in topics :
+        some_posts.append(Post.objects.filter(FK_discussiontopic_post=topic)[0:2])
+        i += 1
 
+    topics = zip(topics, some_posts)
     context = {
         'boards': boards,
         'topics': topics,
     }
 
 
-    return render(request, 'fintech/index.html', context)
+    return render(request, 'test/index.html', context)
 
 def view_post(request, topic_id, post_id) :
     topic = DiscussionTopic.objects.get(id=topic_id)

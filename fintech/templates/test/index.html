@@ -1,0 +1,63 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" style="background-color:black; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Forum Board</title>
+    <link rel="stylesheet" href="{% static 'fintech/style.css' %}">
+    <link rel="icon" type="image/ico" href="{% static 'fintech/mainico.ico' %}">
+  </head>
+  <body style="margin:0px">
+    <header>
+        <div>
+            <ul class="navbar">
+                <li><a href="">Forum</a></li>
+                <li class="activenavbar"><a href="">Topics</a></li>
+                {% if request.user.is_authenticated %}
+                <li style="float:right">
+                    <a href="{% url 'fintech:logout' %}">Logout</a>
+                </li>
+                {% else %}
+                <li style="float:right">
+                    <a href="{% url 'fintech:login' %}">Login</a>
+                </li>
+                {% endif %}
+                <!-- add href to settings page when it is done -->
+                <li style="float:right"><a href="">Settings</a></li>
+            </ul>
+        </div>
+    </header>
+    {% for board in boards %}
+    <h1 class="header">{{ board.board_name }}</h1>
+    {% for topic, posts in topics %}
+        {% if topic.FK_board_discussiontopic == board %}
+            <div class="topic">
+                <span style="padding:15px;">
+                    <h2 style="display:inline;"><a href="topic/{{topic.id}}" class="topicheader">
+                        Topic: {{ topic.topic_name }}
+                    </a></h2>
+                    <span style="float:right;">
+                        <h4 class="topicheader" style="margin:15px">
+                            Started by {{ topic.FK_user_discussiontopic }}
+                        </h4>
+                    </span>
+                </span>
+
+                {% for post in posts %}
+                    <a href="topic/{{topic.id}}/{{post.id}}" style="text-decoration: none;"><h3 class="post" style="padding:0px 0px 0px 15px;">
+                        {{ post.title }}
+                    </h3></a>
+                    <p class="post" style="padding:0px 0px 15px 15px">
+                        Post Text: {{ post.content_text }}
+                    </p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endfor %}
+	
+  </body>
+</html>

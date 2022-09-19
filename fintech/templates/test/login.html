@@ -1,0 +1,61 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" style="background-color:black; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Forum Board</title>
+    <link rel="stylesheet" href="{% static 'fintech/style.css' %}">
+    <link rel="icon" type="image/ico" href="{% static 'fintech/mainico.ico' %}">
+  </head>
+  <body style="margin:0px">
+    <header>
+        <div>
+            <ul class="navbar">
+                <li><a href="{% url 'fintech:index' %}">Forum</a></li>
+                <li><a href="{% url 'fintech:index' %}">Topics</a></li>
+                {% if request.user.is_authenticated %}
+                <li style="float:right">
+                    <a href="{% url 'fintech:logout' %}">Logout</a>
+                </li>
+                {% else %}
+                <li style="float:right" class="activenavbar">
+                    <a href="{% url 'fintech:login' %}">Login</a>
+                </li>
+                {% endif %}
+                <!-- add href to settings page when it is done -->
+                <li style="float:right"><a href="">Settings</a></li>
+            </ul>
+        </div>
+    </header>
+    <div class="account">
+        <form method="post" action="{% url 'fintech:login' %}">
+            {% csrf_token %}
+            <label for="username" class="textinput-label">Username</label>
+            <br/>
+            <input type="text" name="username" class="textinput">
+            <br/>
+            <label for="password" class="textinput-label">Password</label>
+            <br/>
+            <input type="password" name="password" class="textinput">
+            <br/>
+            <div style="text-align: center;">
+                <input type="submit" name="login" class="form-button">
+            </div>
+            {{ form.errors}}
+
+            {% for message in messages %}
+                <p class="textinput-label">{{message}}</p>
+            {% endfor %}
+
+            <p class="textinput-label">
+                Don't have an account?
+                <a href="{% url 'fintech:register' %}" style="color:salmon">Sign up</a>
+            </p>
+        </form>
+    </div>
+
+</body>
+</html>

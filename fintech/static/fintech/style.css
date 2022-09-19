@@ -1,0 +1,105 @@
+ul.navbar  {
+    list-style-type: none;
+    margin: 0;
+    padding:6px 0px;
+    overflow: hidden;
+    background-color: #333;
+}
+
+li  {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 26px;
+}
+
+li a:hover {
+    background-color: #111;
+}
+
+.activenavbar {
+    background-color:salmon;
+}
+
+h1.header {
+    color:white;
+    text-align: center;
+}
+
+.topic {
+    background-color: #333;
+    height: auto;
+    width: 50%;
+    border-radius: 20px;
+    margin-left:auto;
+    margin-right: auto;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.textinput {
+    width: 90%;
+    height: 30px;
+    box-sizing:border-box;
+    margin-left: 5%;
+    margin-top: 4px;
+    border: 1px solid rgb(134, 134, 134);
+}
+
+.textinput-label {
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 18px;
+    color:rgb(233, 233, 233);
+    margin-left:28px;
+}
+
+.form-button {
+    background-color: white;
+    border: 1px solid #111;
+    color:#111;
+    text-decoration: none;
+    height: 26px;
+    width: 20%;
+    margin-top: 20px;
+    font-size:16px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+.account {
+    background-color: #333;
+    height: auto;
+    width: 30%;
+    border-radius: 20px;
+    margin-left:auto;
+    margin-right: auto;
+    margin-top: 100px;
+    margin-bottom: 50px;
+    padding-top:20px;
+    padding-bottom:20px;
+}
+
+.topicheader {
+    color:white;
+    text-decoration: none;
+    display:inline;
+}
+
+h2 a:hover {
+    background-color: #111;
+    border-radius: 5px;
+}
+
+h3:hover {
+    background-color: #111;
+    border-radius: 5px;
+}
+
+.post {
+    color: white;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
