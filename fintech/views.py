@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import FileResponse
 from django.core.files.storage import FileSystemStorage
@@ -118,7 +119,7 @@ def post_comment(request, topic_id, post_id) :
     }
 
     return redirect(url)
-
+@login_required(login_url='/login')
 def create_post(request, topic_id) :
     if request.method == 'POST' :
         post_title = request.POST.get('post_title')
@@ -163,7 +164,7 @@ def view_topic(request, topic_id) :
         'posts':posts,
     }
 
-    return render(request, 'fintech/topic.html', context)
+    return render(request, 'test/topic.html', context)
 
 def logout_user(request) :
     logout(request)
