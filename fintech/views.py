@@ -1,6 +1,6 @@
 import os
 from django.conf import settings
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
@@ -98,7 +98,7 @@ def view_post(request, topic_id, post_id) :
         'user':request.user,
     }
 
-    return render(request, 'fintech/post.html', context)
+    return render(request, 'test/post.html', context)
 
 def post_comment(request, topic_id, post_id) :
     url = '/topic/' + str(topic_id) + '/' + str(post_id) + '/'
@@ -119,13 +119,14 @@ def post_comment(request, topic_id, post_id) :
     }
 
     return redirect(url)
+
 @login_required(login_url='/login')
 def create_post(request, topic_id) :
+    topic = DiscussionTopic.objects.get(id=topic_id)
     if request.method == 'POST' :
         post_title = request.POST.get('post_title')
         content = request.POST.get('post_content')
         user = request.user
-        topic = DiscussionTopic.objects.get(id=topic_id)
         files = request.FILES.getlist('content')
 
         args = {
@@ -136,20 +137,75 @@ def create_post(request, topic_id) :
         }
         new_post = Post(**args)
         new_post.save()
-
         for file in files :
             handle_uploaded_file(file, str(topic_id), str(new_post.id), str(user.id))
 
         for file in files :
-            new_document = DocumentFile(content=file.name, FK_user_document=user, FK_post_document=new_post)
+            new_document = DocumentFile(content=file.name,
+            FK_user_document=user,
+            FK_post_document=new_post,
+            path_to_file='./media/' + str(topic_id) + '/' + str(new_post.id) + '/' + str(user.id)
+            )
             new_document.save()
 
         return redirect('/topic/' + str(topic_id) + "/" + str(new_post.id) + "/")
     context= {
-        'form' : FileForm(request.POST, request.FILES)
+        'form' : FileForm(request.POST, request.FILES),
+        'topic': topic
     }
 
-    return render(request, 'fintech/create_post.html', context)
+    return render(request, 'test/create_post.html', context)
+
+@login_required(login_url='/login')
+def edit_post(request, topic_id, post_id) :
+    
+    topic = get_object_or_404(DiscussionTopic, pk=topic_id)
+    post = get_object_or_404(Post, pk=post_id, FK_discussiontopic_post=topic)
+    user = post.FK_user_post
+
+    if not(request.user == user or request.user.is_superuser):
+        return redirect('/topic/' + str(topic_id) + '/' + str(post_id))
+    
+    files = None
+    
+    try :
+        files = DocumentFile.objects.filter(FK_user_document=user, FK_post_document=post)
+    except :
+        files = []
+
+    if post is not None and request.method == 'POST' :
+        new_title = request.POST.get('post_title')
+        new_text = request.POST.get('post_content')
+        new_files = request.FILES.getlist('content')
+
+        for file in files :
+            radio = request.POST.get(file.content)
+            if radio is not None :
+                file.delete()
+
+        post.title = new_title
+        post.content_text = new_text
+        post.save(update_fields=['title', 'content_text'])
+
+        for file in new_files :
+            handle_uploaded_file(file, str(topic_id), str(post.id), str(user.id))
+
+        for file in new_files :
+            new_document = DocumentFile(content=file.name,
+            FK_user_document=user,
+            FK_post_document=post,
+            path_to_file='./media/' + str(topic_id) + '/' + str(post.id) + '/' + str(user.id)
+            )
+            new_document.save()
+        return redirect('/topic/' + str(topic_id) + '/' + str(post_id) + '/')
+
+    context = {
+        'post': post,
+        'topic': topic,
+        'files': files
+    }
+    return render(request, 'fintech/edit_post.html', context)
+    
 
 def handle_uploaded_file(f, topic_id, post_id, user_id):  
     fs = FileSystemStorage('media/' + topic_id + '/' + post_id + '/' + user_id + '/')

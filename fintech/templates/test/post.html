@@ -1,0 +1,98 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" style="background-color:black; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Forum Board</title>
+    <link rel="stylesheet" href="{% static 'fintech/style.css' %}">
+    <link rel="icon" type="image/ico" href="{% static 'fintech/mainico.ico' %}">
+  </head>
+  <body style="margin:0px">
+    <header>
+        <div>
+            <ul class="navbar">
+                <li><a href="{% url 'fintech:index' %}">Forum</a></li>
+                <li><a href="{% url 'fintech:index' %}">Topics</a></li>
+                <li style="float:right"><a href="/topic/{{topic_id}}/createpost/">Add Post</a></li>
+                {% if request.user.is_authenticated %}
+                <li style="float:right">
+                    <a href="{% url 'fintech:logout' %}">Logout</a>
+                </li>
+                {% else %}
+                <li style="float:right" class="activenavbar">
+                    <a href="{% url 'fintech:login' %}">Login</a>
+                </li>
+                {% endif %}
+                <!-- add href to settings page when it is done -->
+                <li style="float:right"><a href="">Settings</a></li>
+            </ul>
+        </div>
+    </header>
+    <div class="topic">
+        <h1 class="header" style="display:inline; margin-top: 10px; margin-left:28px; font-size:36px">
+            {{ post.title }}
+        </h1>
+        <span style="float:right; margin-top: 10px">
+            <p class="textinput-label" style="display:inline; margin-right:15px">
+                {{ post.creation_date }}
+            </p>
+        </span>
+        <h2 class="post" style="margin-left:28px; padding-bottom:10px; font-size:20px">
+            By {{ post.FK_user_post.username }}
+        </h2>
+        <p class="post" style="margin-left:48px; padding-bottom:50px; font-size:20px">
+            {{ post.content_text}}
+        </p>
+        {% if files %}
+        <p class="post" style="margin-left:48px; padding-bottom:8px; font-size:16px">
+            Attached files:
+        </p>
+        {% endif %}
+        {% for file in files %}
+        <a href="media/{{ file.content }}" style="color:white; text-shadow:2px 2px 8px #111; font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">
+            <h3 style="text-decoration:underline;margin-left:48px; padding-bottom:10px; font-size:14px; display:inline-block">{{ file.content }}</h3>
+        </a>
+        {% endfor %}
+        {% if request.user == post.FK_user_post or request.user.is_superuser %}
+        <div style="text-align:center; padding-bottom:10px">
+            <a href="editpost/"><button class="form-button" type="button">Edit Post</button></a>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <div class="topic">
+        <form method="POST" action="/topic/{{topic_id}}/{{post_id}}/postcomment/">
+            {% csrf_token %}
+            <div style="text-align:center; padding-top:10px">
+                <label class="textinput-label" style="font-size:22px" for="create_comment">Post a Comment</label>
+            </div>
+            <br/>
+            <div style="text-align:center;">
+                <textarea class="textarea" name="create_comment" rows="8" maxlength="255" required></textarea>
+            </div>
+            <br/>
+            <div style="text-align:center;">
+                <a><button class="form-button" type="submit">Submit</button></a>
+            </div>
+        </form>
+        <h4 class="post" style="font-size:24px; margin-left:18px;">
+            Comments
+        </h4>
+        {% for comment in comments %}
+        <p class="post" style="font-size:20px; margin-left:18px;padding-bottom:10px">
+            {{comment.FK_user_comment}}: {{comment.content_text}}
+        </p>
+        {% endfor %}
+        {% if not comments %}
+        <p class="post" style="font-size:20px; margin-left:18px;padding-bottom:10px">
+            There are no comments...
+        </p>
+        {% endif %}
+    </div>
+
+</body>
+</html>

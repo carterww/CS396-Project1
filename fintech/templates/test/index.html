@@ -31,16 +31,16 @@
         </div>
     </header>
     {% for board in boards %}
-    <h1 class="header">{{ board.board_name }}</h1>
+    <h1 class="header" style="font-size:40px">{{ board.board_name }}</h1>
     {% for topic, posts in topics %}
         {% if topic.FK_board_discussiontopic == board %}
             <div class="topic">
                 <span style="padding:15px;">
-                    <h2 style="display:inline;"><a href="topic/{{topic.id}}" class="topicheader">
+                    <h2 style="text-align: center; margin-top:-5px; font-size:32px"><a href="topic/{{topic.id}}" class="topicheader">
                         Topic: {{ topic.topic_name }}
                     </a></h2>
-                    <span style="float:right;">
-                        <h4 class="topicheader" style="margin:15px">
+                    <span style="display:block; margin-top:10px">
+                        <h4 class="topicheader" style="margin:15px; font-size:18px">
                             Started by {{ topic.FK_user_discussiontopic }}
                         </h4>
                     </span>

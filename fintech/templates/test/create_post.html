@@ -16,6 +16,7 @@
             <ul class="navbar">
                 <li><a href="{% url 'fintech:index' %}">Forum</a></li>
                 <li><a href="{% url 'fintech:index' %}">Topics</a></li>
+                <li class="activenavbar" style="float:right"><a href="">Add Post</a></li>
                 {% if request.user.is_authenticated %}
                 <li style="float:right">
                     <a href="{% url 'fintech:logout' %}">Logout</a>
@@ -30,32 +31,29 @@
             </ul>
         </div>
     </header>
-    <div class="account">
-        <form method="post" action="{% url 'fintech:register' %}">
+    <div class="topic">
+        <h1 class="header">Create post for </br>{{topic.topic_name}}</h1>
+        <form method="POST" action="" enctype="multipart/form-data">
             {% csrf_token %}
-            <label for="username" class="textinput-label">Username</label>
-            <br/>
-            <input type="text" name="username" class="textinput">
-            <br/>
-            <label for="password" class="textinput-label">Password</label>
-            <br/>
-            <input type="password" name="password" class="textinput">
-            <br/>
-            <label for="passwordConfirm" class="textinput-label">Confirm Password</label>
-            <input type="password" name="passwordConfirm" class="textinput">
-            <div style="text-align: center;">
-                <a><button type="submit" name="login" class="form-button">Submit</button></a>
+        
+            <label class="textinput-label" style="margin-left:5%" for="post_title">Title</label>
+            <input class="textinput" style="margin-bottom:16px" type="text" name="post_title">
+            </br>
+            <label class="textinput-label" style="margin-left:5%;" for="post_content">Summary</label>
+            </br>
+            <div style="text-align:center">
+                <textarea class="textarea" rows="8" type="text" name="post_content"></textarea>
             </div>
-            {{ form.errors}}
-
-            {% for message in messages %}
-                <p class="textinput-label">{{message}}</p>
-            {% endfor %}
-
-            <p class="textinput-label">
-                Already have an account?
-                <a href="{% url 'fintech:login' %}" style="color:salmon">Login</a>
-            </p>
+            </br>
+            
+            <div style="padding-top:15px; padding-left:6%">
+                <input class="custom-file-input" style="" name="content" type="file" multiple>
+            </div>
+        
+            <div style="text-align:center; padding-bottom:15px; padding-top:15px">
+                <input class="form-button" type="submit" name="submit_post">
+            </div>
+        
         </form>
     </div>
 

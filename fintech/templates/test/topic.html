@@ -16,6 +16,7 @@
             <ul class="navbar">
                 <li><a href="{% url 'fintech:index' %}">Forum</a></li>
                 <li><a href="{% url 'fintech:index' %}">Topics</a></li>
+                <li style="float:right"><a href="createpost/">Add Post</a></li>
                 {% if request.user.is_authenticated %}
                 <li style="float:right">
                     <a href="{% url 'fintech:logout' %}">Logout</a>
@@ -31,16 +32,13 @@
         </div>
     </header>
     <div class="topic">
-        <a href="createpost/">
-            <button class="addpostbutton">Add Post</button>
-        </a>
         <h1 class="header">{{ topic.topic_name }}</h1>
         <span style="padding:15px;">
-            <h2 style="display:inline;"><a href="" class="topicheader">
-                Topic: {{ topic.topic_name }}
-            </a></h2>
+            <h1 style="display:inline;" class="header">
+                Posts
+            </h1>
             <span style="float:right;">
-                <h4 class="topicheader" style="margin:15px">
+                <h4 class="topicheader" style="margin:15px;">
                     Started by {{ topic.FK_user_discussiontopic }}
                 </h4>
             </span>

@@ -17,6 +17,7 @@ li a {
     padding: 14px 16px;
     text-decoration: none;
     font-size: 22px;
+    text-shadow: 2px 2px 8px #111;
 }
 
 li a:hover {
@@ -30,12 +31,13 @@ li a:hover {
 h1.header {
     color:white;
     text-align: center;
+    text-shadow: 2px 2px 8px #111;
 }
 
 .topic {
     background-color: #333;
     height: auto;
-    width: 50%;
+    width: 40%;
     border-radius: 20px;
     margin-left:auto;
     margin-right: auto;
@@ -50,6 +52,10 @@ h1.header {
     margin-left: 5%;
     margin-top: 4px;
     border: 1px solid rgb(134, 134, 134);
+    background-color: rgb(225, 225, 225);
+    border-radius: 10px;
+    font-size:18px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
 .textinput-label {
@@ -57,38 +63,39 @@ h1.header {
     font-size: 18px;
     color:rgb(233, 233, 233);
     margin-left:28px;
+    text-shadow: 2px 2px 8px #111;
+}
+
+.textarea {
+    margin-top: 20px;
+    background-color: rgb(225, 225, 225);
+    border: 1px solid rgb(134, 134, 134);
+    color:#111;
+    font-size:16px;
+    border-radius: 10px;
+    width:90%;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
 .form-button {
     background-color: white;
     border: 1px solid #111;
     color:#111;
+    text-shadow: 2px 2px 8px #111;
     text-decoration: none;
     height: 26px;
     width: 20%;
     margin-top: 20px;
     font-size:16px;
+    border-radius: 8px;
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-}
-
-.addpostbutton {
-    background-color: #111;
-    border: 1px solid white;
-    color: white;
-    text-decoration: none;
-    height: 26px;
-    width:20%;
-    margin-top:20px;
-    margin-right:20px;
-    font-size:18px;
-    float: right;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
 a button:hover {
     background-color:salmon;
     cursor:pointer;
 }
+
 .account {
     background-color: #333;
     height: auto;
@@ -106,6 +113,7 @@ a button:hover {
     color:white;
     text-decoration: none;
     display:inline;
+    text-shadow: 2px 2px 8px #111;
 }
 
 h2 a:hover {
@@ -120,5 +128,6 @@ h3:hover {
 
 .post {
     color: white;
+    text-shadow: 2px 2px 8px #111;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
