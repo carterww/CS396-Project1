@@ -47,7 +47,7 @@
             </br>
             <p class="post" style="margin-left:6%; font-size:18px">Add files</p>
             <div style="padding-top:1px; padding-left:6%">
-                <input class="custom-file-input" style="" name="content" type="file" multiple>
+                <input class="custom-file-input" name="content" type="file" multiple>
                 </br>
                 {% if files %}
                 <p class="post">Select files to delete</p>
@@ -59,8 +59,11 @@
                 {% endfor %}
             </div>
         
-            <div style="text-align:center; padding-bottom:15px; padding-top:15px">
+            <div style="text-align:center; padding-bottom:25px; padding-top:15px">
                 <input class="form-button" type="submit" name="submit_post">
+            </div>
+            <div style="text-align:center; padding-bottom:15px">
+                <a href="deletepost/"><button class="delete-button" type="button">Delete Post</button></a>
             </div>
         
         </form>

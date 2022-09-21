@@ -69,7 +69,8 @@ def index(request) :
     boards = Board.objects.all()
     topics = DiscussionTopic.objects.all()
     some_posts = []
-    i = 0;
+    numposts = Post.objects.all().__len__
+    i = 0
     for topic in topics :
         some_posts.append(Post.objects.filter(FK_discussiontopic_post=topic)[0:2])
         i += 1
@@ -78,6 +79,7 @@ def index(request) :
     context = {
         'boards': boards,
         'topics': topics,
+        'numposts': numposts,
     }
 
 
@@ -156,6 +158,20 @@ def create_post(request, topic_id) :
 
     return render(request, 'test/create_post.html', context)
 
+def authenticate_for_update(request, user) :
+    if not(request.user == user or request.user.is_superuser) :
+        return True
+    return False
+
+def return_post_files(user, post) :
+    files = None
+    
+    try :
+        files = DocumentFile.objects.filter(FK_user_document=user, FK_post_document=post)
+    except :
+        files = []
+    return files
+
 @login_required(login_url='/login')
 def edit_post(request, topic_id, post_id) :
     
@@ -163,15 +179,10 @@ def edit_post(request, topic_id, post_id) :
     post = get_object_or_404(Post, pk=post_id, FK_discussiontopic_post=topic)
     user = post.FK_user_post
 
-    if not(request.user == user or request.user.is_superuser):
+    if authenticate_for_update(request, user):
         return redirect('/topic/' + str(topic_id) + '/' + str(post_id))
     
-    files = None
-    
-    try :
-        files = DocumentFile.objects.filter(FK_user_document=user, FK_post_document=post)
-    except :
-        files = []
+    files = return_post_files(user, post)
 
     if post is not None and request.method == 'POST' :
         new_title = request.POST.get('post_title')
@@ -206,6 +217,18 @@ def edit_post(request, topic_id, post_id) :
     }
     return render(request, 'fintech/edit_post.html', context)
     
+@login_required(login_url='/login')
+def delete_post(request, topic_id, post_id) :
+    topic = get_object_or_404(DiscussionTopic, pk=topic_id)
+    post = get_object_or_404(Post, pk=post_id, FK_discussiontopic_post=topic)
+    user = post.FK_user_post
+
+    if authenticate_for_update(request, user) :
+        return redirect('/topic/' + str(topic_id) + '/' + str(post_id))
+
+    post.delete()
+
+    return redirect('/topic/' + str(topic_id) + '/')
 
 def handle_uploaded_file(f, topic_id, post_id, user_id):  
     fs = FileSystemStorage('media/' + topic_id + '/' + post_id + '/' + user_id + '/')

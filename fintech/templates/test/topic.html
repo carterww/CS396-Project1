@@ -35,7 +35,7 @@
         <h1 class="header">{{ topic.topic_name }}</h1>
         <span style="padding:15px;">
             <h1 style="display:inline;" class="header">
-                Posts
+                {{ posts|length }}{% if posts|length == 1 %} Post {% else %} Posts {% endif %}
             </h1>
             <span style="float:right;">
                 <h4 class="topicheader" style="margin:15px;">
