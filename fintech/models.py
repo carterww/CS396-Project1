@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-import os
+from django.dispatch import Signal
 import shutil
 
 # Create your models here.
@@ -20,6 +20,7 @@ class Post(models.Model) :
     title = models.CharField(max_length=63)
     content_text = models.TextField(max_length=511)
     creation_date = models.DateTimeField(auto_now_add=True)
+    views = models.IntegerField(default=0)
     FK_discussiontopic_post = models.ForeignKey(DiscussionTopic, on_delete=models.CASCADE)
     FK_user_post = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -41,6 +42,8 @@ class Comment(models.Model) :
     FK_post_comment = models.ForeignKey(Post, on_delete=models.CASCADE)
     FK_user_comment = models.ForeignKey(User, on_delete=models.CASCADE)
 
+class Notification(models.Model) :
+    text = models.CharField(max_length=255, default='')
 
 class DocumentFile(models.Model) :
     #using auto generated primary key

@@ -27,33 +27,58 @@
                 </li>
                 {% endif %}
                 <!-- add href to settings page when it is done -->
-                <li style="float:right"><a href="">Settings</a></li>
+                <li style="float:right">
+                    <a onClick="hideNotifs()" style="float:right; cursor:pointer; padding: 12px; position: relative; top:4px">
+                        <img src="{% static 'fintech/bell.png' %}" width="25" height="25">
+                    </a>
+                </li>
             </ul>
         </div>
     </header>
+
+    <div class="notification" id="notif" style="display:none">
+        <span class="notificationspan">{{notification}}</span>
+        <span onClick="hideNotifs()" class="close">X</span>
+    </div>
+
+    <script>
+        function hideNotifs() {
+            var a = document.getElementById("notif");
+            if (a.style.display == "none") {
+                a.style.display = "block";     
+            }
+            else {
+                a.style.display = "none";
+            }
+        }
+    </script>
+
+
     <div class="topic">
         <h1 class="header" style="display:inline; margin-top: 10px; margin-left:28px; font-size:36px">
             {{ post.title }}
         </h1>
-        <span style="float:right; margin-top: 10px">
-            <p class="textinput-label" style="display:inline; margin-right:15px">
-                {{ post.creation_date }}
-            </p>
+        <span style="float:right; margin-top: 10px; margin-right:10px">
+            <img src="{% static 'fintech/view.png' %}" alt="Views" width="30" height="30" style="display:inline-block; margin-left:0%;">
+            <p class="post" style="font-size:16px; display:inline-block; position: relative; top:-8px">{{ post.views }}</p>
         </span>
         <h2 class="post" style="margin-left:28px; padding-bottom:10px; font-size:20px">
             By {{ post.FK_user_post.username }}
         </h2>
-        <p class="post" style="margin-left:48px; padding-bottom:50px; font-size:20px">
+        <p class="post" style="display:block; margin-left:28px; font-size:16px;">
+            {{ post.creation_date }}
+        </p>
+        <p class="post" style="margin-left:28px; padding-bottom:50px; font-size:20px">
             {{ post.content_text}}
         </p>
         {% if files %}
-        <p class="post" style="margin-left:48px; padding-bottom:8px; font-size:16px">
+        <p class="post" style="margin-left:28px; padding-bottom:8px; font-size:16px">
             Attached files:
         </p>
         {% endif %}
         {% for file in files %}
         <a href="media/{{ file.content }}" style="color:white; text-shadow:2px 2px 8px #111; font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">
-            <h3 style="text-decoration:underline;margin-left:48px; padding-bottom:10px; font-size:14px; display:inline-block">{{ file.content }}</h3>
+            <h3 style="text-decoration:underline;margin-left:28px; padding-bottom:10px; font-size:14px; display:inline-block">{{ file.content }}</h3>
         </a>
         {% endfor %}
         {% if request.user == post.FK_user_post or request.user.is_superuser %}

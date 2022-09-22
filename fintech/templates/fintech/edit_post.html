@@ -26,11 +26,33 @@
                     <a href="{% url 'fintech:login' %}">Login</a>
                 </li>
                 {% endif %}
-                <!-- add href to settings page when it is done -->
-                <li style="float:right"><a href="">Settings</a></li>
+                <li style="float:right">
+                    <a onClick="hideNotifs()" style="float:right; cursor:pointer; padding: 12px; position: relative; top:4px">
+                        <img src="{% static 'fintech/bell.png' %}" width="25" height="25">
+                    </a>
+                </li>
             </ul>
         </div>
     </header>
+
+    <div class="notification" id="notif" style="display:none">
+        <span class="notificationspan">{{notification}}</span>
+        <span onClick="hideNotifs()" class="close">X</span>
+    </div>
+
+    <script>
+        function hideNotifs() {
+            var a = document.getElementById("notif");
+            if (a.style.display == "none") {
+                a.style.display = "block";     
+            }
+            else {
+                a.style.display = "none";
+            }
+        }
+    </script>
+
+
     <div class="topic">
         <h1 class="header">Edit Post for</br>{{topic.topic_name}}</h1>
         <form method="POST" action="" enctype="multipart/form-data">

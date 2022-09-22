@@ -10,7 +10,7 @@ from django.contrib import messages
 from django.http import FileResponse
 from django.core.files.storage import FileSystemStorage
 
-from .models import Board, DiscussionTopic, Post, Comment, DocumentFile
+from .models import Board, DiscussionTopic, Post, Comment, DocumentFile, Notification
 from .forms import CreateUserForm, FileForm
 
 # Create your views here.
@@ -27,6 +27,13 @@ def display_images(request, topic_id, post_id, image_name) :
 
 
 def login_(request) :
+    notification = None
+
+    try :
+        notification = Notification.objects.get(pk=1).text
+    except :
+        notification = ''
+
     if request.user.is_authenticated :
         return redirect('fintech:index')
       
@@ -42,10 +49,19 @@ def login_(request) :
         else :
             messages.info(request, 'Username or password not found')
 
-    context = {}
+    context = {
+        'notification': notification,
+    }
     return render(request, 'test/login.html', context)
 
 def register(request) :
+    notification = None
+
+    try :
+        notification = Notification.objects.get(pk=1).text
+    except :
+        notification = ''
+
     if request.user.is_authenticated :
         return redirect('fintech:index')
     
@@ -61,7 +77,7 @@ def register(request) :
         messages.success(request, 'Account was successfully registered')
         return redirect('fintech:login')
     context = {
-
+        'notification': notification,
     }
     return render(request, 'test/register.html', context)
 
@@ -70,6 +86,13 @@ def index(request) :
     topics = DiscussionTopic.objects.all()
     some_posts = []
     numposts = Post.objects.all().__len__
+    notification = None
+
+    try :
+        notification = Notification.objects.get(pk=1).text
+    except :
+        notification = ''
+
     i = 0
     for topic in topics :
         some_posts.append(Post.objects.filter(FK_discussiontopic_post=topic)[0:2])
@@ -80,6 +103,7 @@ def index(request) :
         'boards': boards,
         'topics': topics,
         'numposts': numposts,
+        'notification' : notification,
     }
 
 
@@ -90,6 +114,12 @@ def view_post(request, topic_id, post_id) :
     post = Post.objects.get(FK_discussiontopic_post=topic, id=post_id)
     comments = Comment.objects.filter(FK_post_comment=post)
     files = DocumentFile.objects.filter(FK_post_document=post)
+    notification = None
+
+    try :
+        notification = Notification.objects.get(pk=1).text
+    except :
+        notification = ''
 
     context = {
         'post': post,
@@ -98,7 +128,10 @@ def view_post(request, topic_id, post_id) :
         'post_id': post_id,
         'files':files,
         'user':request.user,
+        'notification':notification,
     }
+    post.views = post.views + 1
+    post.save(update_fields=['views'])
 
     return render(request, 'test/post.html', context)
 
@@ -125,6 +158,13 @@ def post_comment(request, topic_id, post_id) :
 @login_required(login_url='/login')
 def create_post(request, topic_id) :
     topic = DiscussionTopic.objects.get(id=topic_id)
+    notification_old = None
+
+    try :
+        notification_old = Notification.objects.get(pk=1).text
+    except :
+        notification_old = ''
+        
     if request.method == 'POST' :
         post_title = request.POST.get('post_title')
         content = request.POST.get('post_content')
@@ -139,6 +179,11 @@ def create_post(request, topic_id) :
         }
         new_post = Post(**args)
         new_post.save()
+
+        notification = get_object_or_404(Notification, pk=1)
+        notification.text = 'New post by ' + user.username + ' under the topic: ' + topic.topic_name
+        notification.save(update_fields=['text'])
+
         for file in files :
             handle_uploaded_file(file, str(topic_id), str(new_post.id), str(user.id))
 
@@ -153,10 +198,12 @@ def create_post(request, topic_id) :
         return redirect('/topic/' + str(topic_id) + "/" + str(new_post.id) + "/")
     context= {
         'form' : FileForm(request.POST, request.FILES),
-        'topic': topic
+        'topic': topic,
+        'notification': notification_old,
     }
 
     return render(request, 'test/create_post.html', context)
+
 
 def authenticate_for_update(request, user) :
     if not(request.user == user or request.user.is_superuser) :
@@ -178,6 +225,12 @@ def edit_post(request, topic_id, post_id) :
     topic = get_object_or_404(DiscussionTopic, pk=topic_id)
     post = get_object_or_404(Post, pk=post_id, FK_discussiontopic_post=topic)
     user = post.FK_user_post
+    notification = None
+
+    try :
+        notification = Notification.objects.get(pk=1).text
+    except :
+        notification = ''
 
     if authenticate_for_update(request, user):
         return redirect('/topic/' + str(topic_id) + '/' + str(post_id))
@@ -213,7 +266,8 @@ def edit_post(request, topic_id, post_id) :
     context = {
         'post': post,
         'topic': topic,
-        'files': files
+        'files': files,
+        'notification':notification,
     }
     return render(request, 'fintech/edit_post.html', context)
     
@@ -237,10 +291,17 @@ def handle_uploaded_file(f, topic_id, post_id, user_id):
 def view_topic(request, topic_id) :
     topic = DiscussionTopic.objects.get(id=topic_id)
     posts = Post.objects.filter(FK_discussiontopic_post=topic)
+    notification = None
+
+    try :
+        notification = Notification.objects.get(pk=1).text
+    except :
+        notification = ''
 
     context = {
         'topic': topic,
         'posts':posts,
+        'notification': notification,
     }
 
     return render(request, 'test/topic.html', context)

@@ -66,6 +66,30 @@ h1.header {
     text-shadow: 2px 2px 8px #111;
 }
 
+.notification {
+    background-color: crimson;
+    position:absolute;
+    right:20px;
+    top: 70px;
+    border-radius: 20px;
+    padding: 10px 20px;
+}
+
+.close {
+    color:white;
+    font-size:18px;
+    padding-left:8px;
+    cursor:pointer;
+    text-shadow: 2px 2px 8px #111;
+}
+
+.notificationspan {
+    color :white;
+    text-shadow: 2px 2px 8px #111;
+    font-size: 16px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
 .textarea {
     margin-top: 20px;
     background-color: rgb(225, 225, 225);
