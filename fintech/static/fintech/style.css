@@ -83,6 +83,14 @@ h1.header {
     text-shadow: 2px 2px 8px #111;
 }
 
+.droplistitem {
+    text-shadow: 2px 2px 8px #111;
+    color:#111;
+    font-size:16px;
+    margin:0px;
+    padding:4px;
+}
+
 .notificationspan {
     color :white;
     text-shadow: 2px 2px 8px #111;

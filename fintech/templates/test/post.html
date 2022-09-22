@@ -28,7 +28,7 @@
                 {% endif %}
                 <!-- add href to settings page when it is done -->
                 <li style="float:right">
-                    <a onClick="hideNotifs()" style="float:right; cursor:pointer; padding: 12px; position: relative; top:4px">
+                    <a onClick="hideNotifs('notif')" style="float:right; cursor:pointer; padding: 12px; position: relative; top:4px">
                         <img src="{% static 'fintech/bell.png' %}" width="25" height="25">
                     </a>
                 </li>
@@ -38,12 +38,12 @@
 
     <div class="notification" id="notif" style="display:none">
         <span class="notificationspan">{{notification}}</span>
-        <span onClick="hideNotifs()" class="close">X</span>
+        <span onClick="hideNotifs('notif')" class="close">X</span>
     </div>
 
     <script>
-        function hideNotifs() {
-            var a = document.getElementById("notif");
+        function hideNotifs(id) {
+            var a = document.getElementById(id);
             if (a.style.display == "none") {
                 a.style.display = "block";     
             }
@@ -86,6 +86,23 @@
             <a href="editpost/"><button class="form-button" type="button">Edit Post</button></a>
         </div>
         {% endif %}
+        <div style="text-align:center; padding-bottom:10px">
+            <button class="form-button" onClick="hideNotifs('drop')" type="button" style="border-bottom:0px; cursor:pointer">Links
+                <p style="float:right; position: relative; top:-24px; font-size:20px"><b>↓</b></p>
+            </button>
+            <a href="https://calendar.google.com/calendar/" style="text-decoration:none;" target="_blank" rel="noopener noreferrer">
+                <div id="drop" style="display:none; background-color: white; margin-left:41%; margin-right:41%; border-bottom-left-radius: 4px; border-bottom-right-radius: 4px;">
+                    <p style="text-shadow: 2px 2px 8px #111;
+                    color:#111;
+                    font-size:16px;
+                    margin:0px;
+                    padding:4px;
+                    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">
+                        Google Calendar
+                    </p>
+                </div>
+            </a>
+        </div>
 
     </div>
 
