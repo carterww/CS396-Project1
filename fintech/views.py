@@ -129,7 +129,7 @@ def view_post(request, topic_id, post_id) :
     post.save(update_fields=['views'])
 
     return render(request, 'test/post.html', context)
-
+@login_required(login_url='/login')
 def post_comment(request, topic_id, post_id) :
     url = '/topic/' + str(topic_id) + '/' + str(post_id) + '/'
 

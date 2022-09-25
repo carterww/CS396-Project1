@@ -30,8 +30,9 @@ class Post(models.Model) :
 
 def delete_post(post) :
     try :
-        d = DocumentFile.objects.get(FK_post_document=post)
-        d.delete()
+        d = DocumentFile.objects.filter(FK_post_document=post)
+        for f in d :
+            f.delete()
     except :
         return
 
