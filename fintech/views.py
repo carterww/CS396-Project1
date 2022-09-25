@@ -26,13 +26,19 @@ def display_images(request, topic_id, post_id, image_name) :
     return FileResponse(img)
 
 
-def login_(request) :
+def get_notifications() :
     notification = None
 
     try :
         notification = Notification.objects.get(pk=1).text
     except :
         notification = ''
+
+    return notification
+
+def login_(request) :
+    notification = get_notifications()
+
 
     if request.user.is_authenticated :
         return redirect('fintech:index')
@@ -55,24 +61,21 @@ def login_(request) :
     return render(request, 'test/login.html', context)
 
 def register(request) :
-    notification = None
-
-    try :
-        notification = Notification.objects.get(pk=1).text
-    except :
-        notification = ''
+    notification = get_notifications()
 
     if request.user.is_authenticated :
         return redirect('fintech:index')
     
-    username = request.POST.get('username')
-    password = request.POST.get('password')
-    password_validation = request.POST.get('passwordConfirm')
 
     if request.method == 'POST' :
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        password_validation = request.POST.get('passwordConfirm')
+
         if password_validation != password :
             messages.error(request, 'Passwords do not match')
             return redirect('fintech:register')
+        
         user = User.objects.create_user(username=username, password=password)
         messages.success(request, 'Account was successfully registered')
         return redirect('fintech:login')
@@ -86,16 +89,13 @@ def index(request) :
     topics = DiscussionTopic.objects.all()
     some_posts = []
     numposts = Post.objects.all().__len__
-    notification = None
-
-    try :
-        notification = Notification.objects.get(pk=1).text
-    except :
-        notification = ''
+    notification = get_notifications()
 
     i = 0
     for topic in topics :
-        some_posts.append(Post.objects.filter(FK_discussiontopic_post=topic)[0:2])
+        tmp = Post.objects.filter(FK_discussiontopic_post=topic)
+        n = len(tmp) - 2
+        some_posts.append(tmp[n:None])
         i += 1
 
     topics = zip(topics, some_posts)
@@ -114,12 +114,7 @@ def view_post(request, topic_id, post_id) :
     post = Post.objects.get(FK_discussiontopic_post=topic, id=post_id)
     comments = Comment.objects.filter(FK_post_comment=post)
     files = DocumentFile.objects.filter(FK_post_document=post)
-    notification = None
-
-    try :
-        notification = Notification.objects.get(pk=1).text
-    except :
-        notification = ''
+    notification = get_notifications()
 
     context = {
         'post': post,
@@ -158,12 +153,7 @@ def post_comment(request, topic_id, post_id) :
 @login_required(login_url='/login')
 def create_post(request, topic_id) :
     topic = DiscussionTopic.objects.get(id=topic_id)
-    notification_old = None
-
-    try :
-        notification_old = Notification.objects.get(pk=1).text
-    except :
-        notification_old = ''
+    notification_old = get_notifications()
         
     if request.method == 'POST' :
         post_title = request.POST.get('post_title')
@@ -225,12 +215,7 @@ def edit_post(request, topic_id, post_id) :
     topic = get_object_or_404(DiscussionTopic, pk=topic_id)
     post = get_object_or_404(Post, pk=post_id, FK_discussiontopic_post=topic)
     user = post.FK_user_post
-    notification = None
-
-    try :
-        notification = Notification.objects.get(pk=1).text
-    except :
-        notification = ''
+    notification = get_notifications()
 
     if authenticate_for_update(request, user):
         return redirect('/topic/' + str(topic_id) + '/' + str(post_id))
@@ -291,12 +276,7 @@ def handle_uploaded_file(f, topic_id, post_id, user_id):
 def view_topic(request, topic_id) :
     topic = DiscussionTopic.objects.get(id=topic_id)
     posts = Post.objects.filter(FK_discussiontopic_post=topic)
-    notification = None
-
-    try :
-        notification = Notification.objects.get(pk=1).text
-    except :
-        notification = ''
+    notification = get_notifications()
 
     context = {
         'topic': topic,
