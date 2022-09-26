@@ -4,6 +4,7 @@ from . import views
 
 app_name = 'fintech'
 
+# holds all the urls and views they are associated with
 urlpatterns = [
     path('login/', views.login_, name='login'),
     path('register/', views.register, name='register'),

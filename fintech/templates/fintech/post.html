@@ -55,7 +55,7 @@
 
 
     <div class="topic">
-        <h1 class="header" style="display:inline; margin-top: 10px; margin-left:28px; font-size:36px">
+        <h1 class="header" style="display:inline; margin-top: 10px; margin-left:28px; font-size:36px;">
             {{ post.title }}
         </h1>
         <span style="float:right; margin-top: 10px; margin-right:10px">
@@ -106,7 +106,7 @@
 
     </div>
 
-    <div class="topic">
+    <div class="topic" style="">
         <form method="POST" action="/topic/{{topic_id}}/{{post_id}}/postcomment/">
             {% csrf_token %}
             <div style="text-align:center; padding-top:10px">
@@ -125,7 +125,7 @@
             Comments
         </h4>
         {% for comment in comments %}
-        <p class="post" style="font-size:20px; margin-left:18px;padding-bottom:10px">
+        <p class="post" style="font-size:20px; margin-left:18px;padding-bottom:10px; word-break:break-all; white-space: normal;">
             {{comment.FK_user_comment}}: {{comment.content_text}}
         </p>
         {% endfor %}

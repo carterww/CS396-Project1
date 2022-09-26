@@ -32,6 +32,8 @@ h1.header {
     color:white;
     text-align: center;
     text-shadow: 2px 2px 8px #111;
+    word-break: break-all;
+    white-space: normal;
 }
 
 .topic {
@@ -160,6 +162,8 @@ a button:hover {
     text-decoration: none;
     display:inline;
     text-shadow: 2px 2px 8px #111;
+    word-break: break-all;
+    white-space: normal;
 }
 
 h2 a:hover {
@@ -175,5 +179,7 @@ h3:hover {
 .post {
     color: white;
     text-shadow: 2px 2px 8px #111;
+    word-break: break-all;
+    white-space: normal;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }

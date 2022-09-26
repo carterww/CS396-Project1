@@ -72,12 +72,13 @@
                 <input class="custom-file-input" name="content" type="file" multiple>
                 </br>
                 {% if files %}
-                <p class="post">Select files to delete</p>
+                <input type="checkbox" name="deletefiles">
+                <label class="post" for="deletefiles">Delete these files?</label>
                 {% endif %}
                 {% for file in files %}
-                    </br>
-                    <input type="checkbox" name="{{file.content}}">
-                    <label class="post" for="{{file.content}}">{{file.content}}</label>
+                <a href="media/{{ file.content }}" style="color:white; text-shadow:2px 2px 8px #111; font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">
+                    <h3 style="text-decoration:underline;margin-left:28px; padding-bottom:10px; font-size:14px; display:inline-block">{{ file.content }}</h3>
+                </a>
                 {% endfor %}
             </div>
         

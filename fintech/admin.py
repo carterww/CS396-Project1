@@ -3,7 +3,7 @@ from django.conf import settings
 
 from .models import *
 
-# Register your models here.
+# Register models so ./admin/ can edit and delete them
 admin.site.register(DiscussionTopic)
 admin.site.register(Post)
 admin.site.register(Comment)
