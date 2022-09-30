@@ -68,6 +68,22 @@ h1.header {
     text-shadow: 2px 2px 8px #111;
 }
 
+.calendar {
+    background-color:#333;
+    position: absolute;
+    right: 130px;
+    top: 60px;
+    padding: 10px 20px;
+    border-radius:4px;
+}
+
+.calendarspan {
+    color :white;
+    text-shadow: 2px 2px 8px #111;
+    font-size: 20px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
 .notification {
     background-color: crimson;
     position:absolute;

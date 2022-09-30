@@ -26,13 +26,24 @@
                 </li>
                 {% endif %}
                 <li style="float:right">
-                    <a onClick="hideNotifs()" style="float:right; cursor:pointer; padding: 12px; position: relative; top:4px">
+                    <a onClick="hideNotifs('notif')" style="float:right; cursor:pointer; padding: 12px; position: relative; top:4px">
                         <img src="{% static 'fintech/bell.png' %}" width="25" height="25">
+                    </a>
+                </li>
+                <li style="float:right">
+                    <a onClick="hideNotifs('calendar')" style="cursor:pointer">
+                        Calendar ⮟
                     </a>
                 </li>
             </ul>
         </div>
     </header>
+
+    <div class="calendar" id="calendar" style="display:none">
+        <a href="https://calendar.google.com/calendar/" style="text-decoration:underline; text-decoration-color:white;" target="_blank">
+            <span class="calendarspan">Google Calendar</span>
+        </a>
+    </div>
 
     <div class="notification" id="notif" style="display:none">
         <span class="notificationspan">{{notification}}</span>
@@ -40,8 +51,8 @@
     </div>
 
     <script>
-        function hideNotifs() {
-            var a = document.getElementById("notif");
+        function hideNotifs(id) {
+            var a = document.getElementById(id);
             if (a.style.display == "none") {
                 a.style.display = "block";     
             }
