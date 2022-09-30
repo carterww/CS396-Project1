@@ -64,7 +64,7 @@
 
 
     {% for board in boards %}
-    <h1 class="header" style="font-size:40px">{{ board.board_name }} Board</h1>
+    <h1 class="header" style="font-size:40px">{{ board.board_name }}</h1>
     <h2 class="post" style="text-align:center; font-size:26px">{{ numposts }}{% if numposts == 1 %} Post {% else %} Posts {% endif %}</h2>
     {% for topic, posts in topics %}
         {% if topic.FK_board_discussiontopic == board %}
