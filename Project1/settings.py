@@ -37,6 +37,7 @@ ALLOWED_HOSTS = ['10.150.0.187',
 
 INSTALLED_APPS = [
     'fintech.apps.FintechConfig',
+    'assetman.apps.AssetmanConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
