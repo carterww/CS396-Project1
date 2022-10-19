@@ -102,7 +102,7 @@ class UserTrade(models.Model):
 
 # subentity to user for users that sign up for the asset management
 # has more personal information
-class AssetUser(models.Model):
+class FintechUser(models.Model):
     age = models.SmallIntegerField(null=False)
     sex = models.CharField(max_length=1, null=False)
     occupation = models.CharField(max_length=255, null=False)
