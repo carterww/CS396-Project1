@@ -11,8 +11,8 @@ class Asset(models.Model):
 # subentity to asset for a stock
 class Stock(models.Model):
     ticker = models.CharField(max_length=6, null=False, unique=True)
-    yearHigh = models.DecimalField(max_digits=9, decimal_places=2)
-    yearLow = models.DecimalField(max_digits=9, decimal_places=2)
+    yearHigh = models.DecimalField(max_digits=9, decimal_places=2, null=True)
+    yearLow = models.DecimalField(max_digits=9, decimal_places=2, null=True)
     FK_asset_stock = models.ForeignKey(Asset, on_delete=models.CASCADE,  null=False, primary_key=True)
 
 # weak entity for stock that is used to keep track of daily stock data
@@ -34,7 +34,7 @@ class Address(models.Model):
     zipCode = models.IntegerField()
     state = models.CharField(max_length=2, null=False)
     city = models.CharField(max_length=255, null=False)
-    unitNum = models.IntegerField()
+    unitNum = models.IntegerField(null=True)
 
 # subentity to asset for a house, office, or building
 class Property(models.Model):
@@ -58,7 +58,7 @@ class MiscAsset(models.Model):
 
 # entity to desribe a realestate agent or broker
 class Agent(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, null=True)
     firmName = models.CharField(max_length=255)
     FK_address_agent = models.ForeignKey(Address, on_delete= models.CASCADE,  null=False, unique=True)
 
@@ -82,6 +82,7 @@ class Trade(models.Model):
         ]
     action = models.CharField(max_length=1, null=False)
     tradeDate = models.DateField(null=False, default=now)
+    pricePerAsset = models.DecimalField(max_digits=13, decimal_places=2, null=False, default=1)
     assetQuantity = models.FloatField(null=False, default=1.0)
     FK_asset_trade = models.ForeignKey(Asset, on_delete= models.CASCADE,  null=False)
     FK_agent_trade = models.ForeignKey(Agent, on_delete= models.CASCADE)
@@ -89,7 +90,7 @@ class Trade(models.Model):
 # entity used to show current assets the user is holding
 # upon "selling" the asset, the row is deleted so will no longer display under current holdings
 class CurrentHoldings(models.Model):
-    FK_trade = models.ForeignKey(Trade, on_delete= models.CASCADE,  null=False)
+    FK_trade = models.ForeignKey(Trade, on_delete=models.CASCADE,  null=False, primary_key=True)
 
 # implements m-n relationship between trade and user
 class UserTrade(models.Model):

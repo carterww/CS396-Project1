@@ -1,0 +1,73 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" style="background-color:black; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Asset Management</title>
+    <link rel="stylesheet" href="{% static 'assetman/style.css' %}">
+    <!--<link rel="icon" type="image/ico" href="{% static 'fintech/mainico.ico' %}">-->
+  </head>
+  <body style="margin:0px">
+    <header>
+        <div>
+            <ul class="navbar">
+                <li><a href="">Assets</a></li>
+                {% if request.user.is_authenticated %}
+                <li style="float:right">
+                    <a href="{% url 'fintech:logout' %}">Logout</a>
+                </li>
+                <li style="float:right">
+                    <a href="">Account Settings</a>
+                </li>
+                {% else %}
+                <li style="float:right">
+                    <a href="{% url 'fintech:login' %}">Login</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </header>
+    <body>
+        {% if stocks %}
+        <table style="color:white">
+            <tr>
+                <th>Stock</th>
+                <th>Ticker</th>
+                <th>Quantity</th>
+                <th>Gain/Loss</th>
+            </tr>
+            {% for stock in stocks %}
+                <tr>
+                    <td>{{ stock.Stock.FK_asset_stock.assetName }}</td>
+                    <td>{{ stock.Stock.ticker }}</td>
+                    <td>{{ stock.Trade.assetQuantity }}</td>
+                    <td>{{ stock.gain }}%</td>
+                    <td><a href="">edit</a></td>
+                    <td><a href="">delete lot</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+        {% if properties %}
+        <table style="color:white">
+            <tr>
+                <th>Property</th>
+                <th>Fee</th>
+                <th>Address</th>
+            </tr>
+            {% for property in properties %}
+                <tr>
+                    <td>{{ property.Property.FK_asset_property.assetName }}</td>
+                    <td>{{ property.Property.totalFee }}</td>
+                    <td>{{ property.Property.FK_address_property.street }} {{ property.Property.FK_address_property.city }}</td>
+                    <td><a href="">edit</a></td>
+                    <td><a href="">delete lot</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+    </body>
+</html>

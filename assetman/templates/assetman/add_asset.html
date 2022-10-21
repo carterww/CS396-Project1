@@ -1,0 +1,68 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" style="background-color:black; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Asset Management</title>
+    <link rel="stylesheet" href="{% static 'assetman/style.css' %}">
+    <!--<link rel="icon" type="image/ico" href="{% static 'fintech/mainico.ico' %}">-->
+  </head>
+  <body style="margin:0px">
+    <header>
+        <div>
+            <ul class="navbar">
+                <li><a href="/assets/">Assets</a></li>
+                {% if request.user.is_authenticated %}
+                <li style="float:right">
+                    <a href="{% url 'fintech:logout' %}">Logout</a>
+                </li>
+                <li style="float:right">
+                    <a href="">Account Settings</a>
+                </li>
+                {% else %}
+                <li style="float:right">
+                    <a href="{% url 'fintech:login' %}">Login</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </header>
+
+    <script>
+        function renderForm(type) {
+            html = ''
+            if (type == 'n') {
+                return
+            } else if (type == 's') {
+                html += '<label for="name">CompanyName</label>'
+                html += '<input type="text" name="name">'
+            } else if (type == 'p') {
+
+            } else if (type == 'b') {
+
+            } else {
+
+            }
+            document.getElementById('specific').innerHTML=html;
+        }
+    </script>
+
+
+    <body>
+        <form method="POST" action="" id="form">
+            {% csrf_token %}
+            <label for="assetType">Select the Type of Asset</label>
+            <select name="assetType" form="form" id="assetType" onChange="renderForm(value)">
+                <option value="n">Select an Option</option>
+                <option value="s">Stock</option>
+                <option value="p">Property</option>
+                <option value="b">Bond</option>
+                <option value="m">Miscellaneous</option>
+            </select>
+            <div id="specific"></div>
+        </form>
+    </body>
+</html>

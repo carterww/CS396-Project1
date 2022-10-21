@@ -5,4 +5,8 @@ from . import views
 app_name = 'assetman'
 
 # holds all the urls and views they are associated with
-urlpatterns = []
+urlpatterns = [
+    path('', views.home, name='assets'),
+    path('delete/<int:trade_id>/', views.deleteAsset, name='deleteAsset'),
+    path('addasset/', views.addAsset, name='addAsset'),
+]
