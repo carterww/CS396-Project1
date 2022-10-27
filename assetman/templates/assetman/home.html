@@ -30,7 +30,6 @@
             </ul>
         </div>
     </header>
-    <body>
         {% if stocks %}
         <table style="color:white">
             <tr>
@@ -45,8 +44,8 @@
                     <td>{{ stock.Stock.ticker }}</td>
                     <td>{{ stock.Trade.assetQuantity }}</td>
                     <td>{{ stock.gain }}%</td>
-                    <td><a href="">edit</a></td>
-                    <td><a href="">delete lot</a></td>
+                    <td><a href="editasset/{{ stock.Trade.id }}">edit</a></td>
+                    <td><a href="delete/{{ stock.Trade.id }}/">delete lot</a></td>
                 </tr>
             {% endfor %}
         </table>
@@ -64,7 +63,51 @@
                     <td>{{ property.Property.totalFee }}</td>
                     <td>{{ property.Property.FK_address_property.street }} {{ property.Property.FK_address_property.city }}</td>
                     <td><a href="">edit</a></td>
-                    <td><a href="">delete lot</a></td>
+                    <td><a href="delete/{{ property.Trade.id }}/">delete lot</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+        {% if bonds %}
+        <table style="color:white">
+            <tr>
+                <th>Issuer</th>
+                <th>Interest Rate</th>
+                <th>Face Value</th>
+                <th>Maturity Date</th>
+                <th>Purchase Price</th>
+                <th>Quantity</th>
+            </tr>
+            {% for bond in bonds %}
+                <tr>
+                    <td>{{ bond.Bond.issuer }}</td>
+                    <td>{{ bond.Bond.interestRate }}</td>
+                    <td>{{ bond.Bond.faceValue }}</td>
+                    <td>{{ bond.Bond.maturityDate }}</td>
+                    <td>{{ bond.Trade.pricePerAsset }}</td>
+                    <td>{{ bond.Trade.quantity }}</td>
+                    <td><a href="">edit</a></td>
+                    <td><a href="delete/{{ bond.Trade.id }}/">delete lot</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+        {% if misc %}
+        <table style="color:white">
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Purchase Price</th>
+                <th>Quantity</th>
+            </tr>
+            {% for m in misc %}
+                <tr>
+                    <td>{{ m.Misc.FK_asset_misc.assetName }}</td>
+                    <td>{{ m.Misc.description }}</td>
+                    <td>{{ m.Trade.pricePerAsset }}</td>
+                    <td>{{ m.Trade.Quantity }}</td>
+                    <td><a href="">edit</a></td>
+                    <td><a href="delete/{{ m.Trade.id }}/">delete lot</a></td>
                 </tr>
             {% endfor %}
         </table>

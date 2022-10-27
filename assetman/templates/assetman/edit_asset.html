@@ -1,0 +1,148 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" style="background-color:black; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Asset Management</title>
+    <link rel="stylesheet" href="{% static 'assetman/style.css' %}">
+    <!--<link rel="icon" type="image/ico" href="{% static 'fintech/mainico.ico' %}">-->
+  </head>
+  <body style="margin:0px">
+    <header>
+        <div>
+            <ul class="navbar">
+                <li><a href="/assets/">Assets</a></li>
+                {% if request.user.is_authenticated %}
+                <li style="float:right">
+                    <a href="{% url 'fintech:logout' %}">Logout</a>
+                </li>
+                <li style="float:right">
+                    <a href="">Account Settings</a>
+                </li>
+                {% else %}
+                <li style="float:right">
+                    <a href="{% url 'fintech:login' %}">Login</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </header>
+
+    <div class="topic">
+        <form method="POST" action="" id="form">
+            {% csrf_token %}
+            <div id="specific">
+                {% if assetType == 's' %}
+                    <label class="textinput-label" for="name">Company's Name</label>
+                    <input class="textinput" type="text" name="name" value="{{ asset.Stock.FK_asset_stock.assetName }}" required>
+
+                    <label class="textinput-label" for="ticker">Ticker</label>
+                    <input class="textinput" type="text" name="ticker" value="{{ asset.Stock.ticker }}" required>
+
+                    <label class="textinput-label" for="date">Trade Date</label>
+                    <input class="textinput" type="date" name="date" value="{{ asset.Trade.tradeDate }}" required>
+
+                    <label class="textinput-label" for="price">Price Per Share</label>
+                    <input class="textinput" type="number" name="price" value="{{ asset.Trade.pricePerAsset }}" required step="0.01" min="0">
+
+                    <label class="textinput-label" for="quantity">Quantity</label>
+                    <input class="textinput" type="number" name="quantity" value="{{ asset.Trade.assetQuantity }}" required step="0.01" min="0.01">
+
+                    <label class="textinput-label" for="agent">Broker</label>
+                    <input class="textinput" type="text" name="agent" value="{{ asset.Trade.FK_agent_trade.firmName }}" required>
+
+                {% endif %}
+                {% if assetType == 'p' %}
+                    <label class="textinput-label" for="name">Name for Propert</label>
+                    <input class="textinput" type="text" name="name" value="{{ asset.Property.FK_assset_property.assetName }}" required>
+
+                    <label class="textinput-label" for="street">Street Address</label>
+                    <input class="textinput" type="text" name="street" value="{{ asset.Property.FK_address_property.street }}" required>
+
+                    <label class="textinput-label" for="unit">Unit Number</label>
+                    <input class="textinput" type="number" name="unit" value="{{ asset.Property.FK_address_property.unitNum }}" required>
+
+                    <label class="textinput-label" for="city">City</label>
+                    <input class="textinput" type="text" name="city" value="{{ asset.Property.FK_address_property.city }}" required>
+
+                    <label class="textinput-label" for="zip">Zip Code</label>
+                    <input class="textinput" type="number" name="zip" value="{{ asset.Property.FK_address_property.zipCode }}" required>
+
+                    <label class="textinput-label" for="state">State</label>
+                    <input class="textinput" type="text" name="state" value="{{ asset.Property.FK_address_property.state }}" required>
+
+                    <label class="textinput-label" for="date">Purchase Date</label>
+                    <input class="textinput" type="date" name="date" value="{{ asset.Trade.tradeDate }}" required>
+
+                    <label class="textinput-label" for="price">Total Cost of Property</label>
+                    <input class="textinput" type="number" name="price" value="{{ asset.Trade.pricePerAsset }}" required step="0.01" min="0">
+
+                    <label class="textinput-label" for="fee">Total Fees</label>
+                    <input class="textinput" type="number" name="fee" value="{{ asset.Property.totalFee }}" required step="0.01" min="0">
+
+                    <label class="textinput-label" for="agent">Agent</label>
+                    <input class="textinput" type="text" name="agent" value="{{ asset.Trade.FK_agent_trade.name }}" required>
+                {% endif %}
+                {% if assetType == 'b' %}
+                    <label class="textinput-label" for="name">Descriptive Name</label>
+                    <input class="textinput" type="text" name="name" value="{{ asset.Bond.FK_asset_bond.assetName }}" required>
+
+                    <label class="textinput-label" for="issuer">Issuer</label>
+                    <input class="textinput" type="text" name="issuer" value="{{ asset.Bond.issuer }}" required>
+
+                    <label class="textinput-label" for="rating">Rating</label>
+                    <input class="textinput" type="text" name="rating" value="{{ asset.Bond.rating }}">
+
+                    <label class="textinput-label" for="rate">Interest Rate (As Percentage)</label>
+                    <input class="textinput" type="number" name="rate" value="{{ asset.Bond.interestRate }}" required step="0.01" min="0">
+
+                    <label class="textinput-label" for="face">Face Value</label>
+                    <input class="textinput" type="number" name="face" value="{{ asset.Bond.faceValue }}" required step="0.01" min="0.01">
+
+                    <label class="textinput-label" for="date">Purchase Date</label>
+                    <input class="textinput" type="date" name="date" value="{{ asset.Trade.tradeDate }}" required>
+
+                    <label class="textinput-label" for="maturity">Maturity Date</label>
+                    <input class="textinput" type="date" name="maturity" value="{{ asset.Bond.maturityDate }}" required>
+
+                    <label class="textinput-label" for="price">Price per Bond</label>
+                    <input class="textinput" type="number" name="price" value="{{ asset.Trade.pricePerAsset }}" required step="0.01" min="0.01">
+
+                    <label class="textinput-label" for="quantity">Quantity</label>
+                    <input class="textinput" type="number" name="quantity" value="{{ asset.Trade.quantity }}" required step="0.01" min="0.01">
+
+                    <label class="textinput-label" for="agent">Broker/Seller</label>
+                    <input class="textinput" type="text" name="agent" value="{{ asset.Trade.FK_agent_trade.firmName }}" required>
+                {% endif %}
+                {% if assetType == 'm' %}
+                    <label class="textinput-label" for="name">Name for Asset</label>
+                    <input class="textinput" type="text" name="name" value="{{ asset.Misc.FK_asset_misc.assetName }}" required>
+
+                    <label class="textinput-label" for="description">Description for Asset</label>
+                    <input class="textinput" type="text" name="description" value="{{ asset.Misc.description }}" required>
+
+                    <label class="textinput-label" for="price">Price per Asset</label>
+                    <input class="textinput" type="number" name="price" value="{{ asset.Trade.pricePerAsset }}" required step="0.01" min="0.01">
+
+                    <label class="textinput-label" for="quantity">Quantity</label>
+                    <input class="textinput" type="number" name="quantity" value="{{ asset.Trade.quantity }}" required step="0.01" min="0.01">
+
+                    <label class="textinput-label" for="date">Purchase Date</label>
+                    <input class="textinput" type="date" name="date" value="{{ asset.Trade.tradeDate }}" required>
+
+                    <label class="textinput-label" for="agent">Agent/Broker/Seller (Leave blank if none)</label>
+                    <input class="textinput" type="text" name="agent" value="{{ asset.Trade.FK_agent_trade.name }}">
+                {% endif %}
+            </div>
+            <div id="userfields"></div>
+            <div style="text-align:center; padding-bottom:15px; padding-top:15px">
+                <button class="form-button" type="submit" name="submit_post">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    </body>
+</html>

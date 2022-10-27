@@ -35,34 +35,147 @@
         function renderForm(type) {
             html = ''
             if (type == 'n') {
-                return
             } else if (type == 's') {
-                html += '<label for="name">CompanyName</label>'
-                html += '<input type="text" name="name">'
+                html += '<label class="textinput-label" for="name">Company\'s Name</label>'
+                html += '<input class="textinput" type="text" name="name" required>'
+
+                html += '<label class="textinput-label" for="ticker">Ticker</label>'
+                html += '<input class="textinput" type="text" name="ticker" required>'
+
+                html += '<label class="textinput-label" for="date">Trade Date</label>'
+                html += '<input class="textinput" type="date" name="date" required>'
+
+                html += '<label class="textinput-label" for="price">Price Per Share</label>'
+                html += '<input class="textinput" type="number" name="price" required step="0.01" min="0">'
+
+                html += '<label class="textinput-label" for="quantity">Quantity</label>'
+                html += '<input class="textinput" type="number" name="quantity" required step="0.01" min="0.01">'
+
+                html += '<label class="textinput-label" for="agent">Broker</label>'
+                html += '<input class="textinput" type="text" name="agent" required>'
+
             } else if (type == 'p') {
+                html += '<label class="textinput-label" for="name">Name for Property</label>'
+                html += '<input class="textinput" type="text" name="name" required>'
+
+                html += '<label class="textinput-label" for="street">Street Address</label>'
+                html += '<input class="textinput" type="text" name="street" required>'
+
+                html += '<label class="textinput-label" for="unit">Unit Number</label>'
+                html += '<input class="textinput" type="number" name="unit">'
+
+                html += '<label class="textinput-label" for="city">City</label>'
+                html += '<input class="textinput" type="text" name="city" required>'
+
+                html += '<label class="textinput-label" for="zip">Zip Code</label>'
+                html += '<input class="textinput" type="number" name="zip" required>'
+
+                html += '<label class="textinput-label" for="state">State</label>'
+                html += '<input class="textinput" type="text" name="state" required>'
+
+                html += '<label class="textinput-label" for="date">Purchase Date</label>'
+                html += '<input class="textinput" type="date" name="date" required>'
+
+                html += '<label class="textinput-label" for="price">Total Cost of Property</label>'
+                html += '<input class="textinput" type="number" name="price" required step="0.01" min="0">'
+
+                html += '<label class="textinput-label" for="fee">Total Fees</label>'
+                html += '<input class="textinput" type="number" name="fee" required step="0.01" min="0">'
+
+                html += '<label class="textinput-label" for="agent">Agent</label>'
+                html += '<input class="textinput" type="text" name="agent" required>'
 
             } else if (type == 'b') {
+                html += '<label class="textinput-label" for="name">Descriptive Name</label>'
+                html += '<input class="textinput" type="text" name="name" required>'
 
+                html += '<label class="textinput-label" for="issuer">Issuer</label>'
+                html += '<input class="textinput" type="text" name="issuer" required>'
+
+                html += '<label class="textinput-label" for="rating">Rating</label>'
+                html += '<input class="textinput" type="text" name="rating">'
+
+                html += '<label class="textinput-label" for="rate">Interest Rate (As Percentage)</label>'
+                html += '<input class="textinput" type="number" name="rate" required step="0.01" min="0">'
+
+                html += '<label class="textinput-label" for="face">Face Value</label>'
+                html += '<input class="textinput" type="number" name="face" required step="0.01" min="0.01">'
+
+                html += '<label class="textinput-label" for="date">Purchase Date</label>'
+                html += '<input class="textinput" type="date" name="date" required>'
+
+                html += '<label class="textinput-label" for="maturity">Maturity Date</label>'
+                html += '<input class="textinput" type="date" name="maturity" required>'
+
+                html += '<label class="textinput-label" for="price">Price per Bond</label>'
+                html += '<input class="textinput" type="number" name="price" required step="0.01" min="0.01">'
+
+                html += '<label class="textinput-label" for="quantity">Quantity</label>'
+                html += '<input class="textinput" type="number" name="quantity" required step="0.01" min="0.01">'
+
+                html += '<label class="textinput-label" for="agent">Broker/Seller</label>'
+                html += '<input class="textinput" type="text" name="agent" required>'
             } else {
+                html += '<label class="textinput-label" for="name">Name for Asset</label>'
+                html += '<input class="textinput" type="text" name="name" required>'
 
+                html += '<label class="textinput-label" for="description">Description for Asset</label>'
+                html += '<input class="textinput" type="text" name="description" required>'
+
+                html += '<label class="textinput-label" for="price">Price per Asset</label>'
+                html += '<input class="textinput" type="number" name="price" required>'
+
+                html += '<label class="textinput-label" for="quantity">Quantity</label>'
+                html += '<input class="textinput" type="number" name="quantity" required>'
+
+                html += '<label class="textinput-label" for="date">Purchase Date</label>'
+                html += '<input class="textinput" type="date" name="date" required>'
+
+                html += '<label class="textinput-label" for="agent">Agent/Broker/Seller (Leave blank if none)</label>'
+                html += '<input class="textinput" type="text" name="agent">'
             }
+            html += '<label class="textinput-label" for="numusers" >Number of Other Users (put 0 if only you own this asset)</label>'
+            html += '<input class="textinput" type="number" name="numusers" onchange="renderUserInputs(this.value)" required>'
             document.getElementById('specific').innerHTML=html;
         }
     </script>
 
+    <script>
+        function renderUserInputs(value) {
+            html = ''
+            if (value % 1 == 0 && value > 0) {
+                html += '</br><label class="textinput-label">Enter the username for each user</label></br></br>'
+                for (i = 1; i <= value && i <= 3; i++) {
+                    html+= '<label class="textinput-label" for="user' + i.toString() + '">User ' + i.toString() + '</label>'
+                    html += '<input class="textinput" type="text" name="user' + i.toString() + '" required>'
+                }
+            }
 
-    <body>
+            document.getElementById('userfields').innerHTML = html;
+        }
+    </script>
+
+    <div class="topic">
         <form method="POST" action="" id="form">
             {% csrf_token %}
-            <label for="assetType">Select the Type of Asset</label>
-            <select name="assetType" form="form" id="assetType" onChange="renderForm(value)">
-                <option value="n">Select an Option</option>
-                <option value="s">Stock</option>
-                <option value="p">Property</option>
-                <option value="b">Bond</option>
-                <option value="m">Miscellaneous</option>
-            </select>
+            <div style="text-align:center">
+                <label class="topicheader" for="assetType" style="font-size:20px">Select the Type of Asset</label>
+                </br>
+                </br>
+                <select class="select-container" name="assetType" form="form" id="assetType" onChange="renderForm(value)">
+                    <option value="n">Select an Option</option>
+                    <option value="s">Stock</option>
+                    <option value="p">Property</option>
+                    <option value="b">Bond</option>
+                    <option value="m">Miscellaneous</option>
+                </select>
+            </div>
             <div id="specific"></div>
+            <div id="userfields"></div>
+            <div style="text-align:center; padding-bottom:15px; padding-top:15px">
+                <button class="form-button" type="submit" name="submit_post">Submit</button>
+            </div>
         </form>
-    </body>
+    </div>
+</body>
 </html>

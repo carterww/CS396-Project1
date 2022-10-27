@@ -9,4 +9,5 @@ urlpatterns = [
     path('', views.home, name='assets'),
     path('delete/<int:trade_id>/', views.deleteAsset, name='deleteAsset'),
     path('addasset/', views.addAsset, name='addAsset'),
+    path('editasset/<int:trade_id>/', views.editAsset, name='editAsset'),
 ]

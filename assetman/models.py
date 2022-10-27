@@ -59,8 +59,8 @@ class MiscAsset(models.Model):
 # entity to desribe a realestate agent or broker
 class Agent(models.Model):
     name = models.CharField(max_length=255, null=True)
-    firmName = models.CharField(max_length=255)
-    FK_address_agent = models.ForeignKey(Address, on_delete= models.CASCADE,  null=False, unique=True)
+    firmName = models.CharField(max_length=255, unique=True)
+    FK_address_agent = models.ForeignKey(Address, on_delete= models.CASCADE,  null=True, unique=True)
 
 # entity to hold all fees for an agent
 class AgentFee(models.Model):
@@ -85,7 +85,7 @@ class Trade(models.Model):
     pricePerAsset = models.DecimalField(max_digits=13, decimal_places=2, null=False, default=1)
     assetQuantity = models.FloatField(null=False, default=1.0)
     FK_asset_trade = models.ForeignKey(Asset, on_delete= models.CASCADE,  null=False)
-    FK_agent_trade = models.ForeignKey(Agent, on_delete= models.CASCADE)
+    FK_agent_trade = models.ForeignKey(Agent, on_delete= models.CASCADE, null=True)
 
 # entity used to show current assets the user is holding
 # upon "selling" the asset, the row is deleted so will no longer display under current holdings

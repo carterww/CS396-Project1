@@ -140,6 +140,26 @@ h1.header {
     border-radius: 8px;
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
+.form-button:hover {
+    background-color:salmon;
+    cursor:pointer;
+}
+
+.select-container {
+    background-color: white;
+    border: 1px solid #111;
+    color:#111;
+    text-decoration: none;
+    height: 26px;
+    width: 20%;
+    margin-top: 20px;
+    font-size:16px;
+    border-radius: 8px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+.select-container:hover {
+    cursor:pointer;
+}
 
 .delete-button {
     background-color:firebrick;
