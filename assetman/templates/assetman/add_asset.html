@@ -123,10 +123,10 @@
                 html += '<input class="textinput" type="text" name="description" required>'
 
                 html += '<label class="textinput-label" for="price">Price per Asset</label>'
-                html += '<input class="textinput" type="number" name="price" required>'
+                html += '<input class="textinput" type="number" name="price" required step="0.01" min="0.01">'
 
                 html += '<label class="textinput-label" for="quantity">Quantity</label>'
-                html += '<input class="textinput" type="number" name="quantity" required>'
+                html += '<input class="textinput" type="number" name="quantity" required step="0.01" min="0.01">'
 
                 html += '<label class="textinput-label" for="date">Purchase Date</label>'
                 html += '<input class="textinput" type="date" name="date" required>'
