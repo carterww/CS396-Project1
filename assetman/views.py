@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 
 from .models import *
 from .joinedmodels import *
-from .helpviews import handle_add_stock, handle_add_property, handle_add_bond, handle_add_misc
+from .helpviews import *
 
 # Create your views here.
 
@@ -31,6 +31,10 @@ def home(request):
 def editAsset(request, trade_id) :
     responseCode, currHolding, assetTrade = check_auth_and_grab_trade(request, trade_id)
 
+    if responseCode == 401 :
+        return HttpResponse("You are not authorized to edit this asset", status=401)
+
+
     assetType, asset = get_asset_type(currHolding)
 
     context = {}
@@ -42,11 +46,16 @@ def editAsset(request, trade_id) :
             'asset': asset,
         }
 
-    if responseCode == 401 :
-        return HttpResponse("You are not authorized to edit this asset", status=401)
-
     if request.method == 'POST' :
-        0
+        if assetType == 's' :
+            handle_edit_stock(request, trade_id)
+        elif assetType == 'p' :
+            handle_edit_property(request, trade_id)
+        elif assetType == 'b' :
+            handle_edit_bond(request, trade_id)
+        elif assetType == 'm' :
+            handle_edit_misc(request, trade_id)
+        return redirect('/assets/')
 
     return render(request, 'assetman/edit_asset.html', context)
 
@@ -84,6 +93,8 @@ def deleteAsset(request, trade_id):
         'FK_agent_trade': assetTrade.FK_agent_trade,
     }
 
+    assetType, asset = get_asset_type(currHolding)
+
     if currHolding is not None :
         currHolding.delete()
     sellTrade = Trade(**sellTradeArgs)
@@ -91,7 +102,21 @@ def deleteAsset(request, trade_id):
     sellTrade.save()
     sellUserTrade.save()
 
+
     return redirect('/assets/')
+
+def queryTrades(request): 
+
+    context = {}
+
+    if request.method == 'POST' :
+        trades = Trade.objects.filter(tradeDate=request.POST.get('date'))
+
+        context['trades'] = trades
+
+        return render(request, 'assetman/showtrade.html', context)
+
+    return render(request, 'assetman/querytrade.html', context)
 
 def check_auth_and_grab_trade(request, trade_id) :
     currHolding = get_object_or_404(CurrentHoldings, FK_trade=trade_id)

@@ -1,0 +1,71 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" style="background-color:black; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Asset Management</title>
+    <link rel="stylesheet" href="{% static 'assetman/style.css' %}">
+    <!--<link rel="icon" type="image/ico" href="{% static 'fintech/mainico.ico' %}">-->
+  </head>
+  <body style="margin:0px">
+    <header>
+        <div>
+            <ul class="navbar">
+                <li><a href="/assets/">Assets</a></li>
+                {% if request.user.is_authenticated %}
+                <li style="float:right">
+                    <a href="{% url 'fintech:logout' %}">Logout</a>
+                </li>
+                <li style="float:right">
+                    <a href="">Account Settings</a>
+                </li>
+                {% else %}
+                <li style="float:right">
+                    <a href="{% url 'fintech:login' %}">Login</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </header>
+    <div class="topic">
+        {% if trades %}
+        <table>
+            <tr>
+                <th>Asset Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Agent/Firm</th>
+                <th>Trade Date</th>
+                <th>Trade Action</th>
+            </tr>
+            {% for trade in trades %}
+                <tr>
+                    
+                    <td>{{ trade.FK_asset_trade.assetName }}</td>
+                    <td>{{ trade.pricePerAsset }}</td>
+                    <td>{{ trade.assetQuantity }}</td>
+                    {% if trade.FK_agent_trade.firmName is not None %}
+                    <td>{{ trade.FK_agent_trade.firmName }}</td>
+                    {% elif trade.FK_agent_trade.name is not None %}
+                    <td>{{ trade.FK_agent_trade.name }}</td>
+                    {% else %}
+                    <td>No Agent/Firm</td>
+                    {% endif %}
+                    <td>{{ trade.tradeDate }}</td>
+                    {% if trade.action == 'B' %}
+                    <td>Buy</td>
+                    {% else %}
+                    <td>Sell</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+
+        </table>
+        {% endif %}
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" style="background-color:black; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Asset Management</title>
+    <link rel="stylesheet" href="{% static 'assetman/style.css' %}">
+    <!--<link rel="icon" type="image/ico" href="{% static 'fintech/mainico.ico' %}">-->
+  </head>
+  <body style="margin:0px">
+    <header>
+        <div>
+            <ul class="navbar">
+                <li><a href="/assets/">Assets</a></li>
+                {% if request.user.is_authenticated %}
+                <li style="float:right">
+                    <a href="{% url 'fintech:logout' %}">Logout</a>
+                </li>
+                <li style="float:right">
+                    <a href="">Account Settings</a>
+                </li>
+                {% else %}
+                <li style="float:right">
+                    <a href="{% url 'fintech:login' %}">Login</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </header>
+    <div class="topic">
+        <form method="POST" action="/assets/findtrades/">
+            {% csrf_token %}
+            <label class="textinput-label" for="date">Trade date</label>
+            <input class="textinput" type="date" name="date">
+
+            <div style="text-align:center; padding-bottom:15px; padding-top:15px">
+                <button class="form-button" type="submit" name="submit_post">Submit</button>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

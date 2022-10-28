@@ -53,17 +53,18 @@
 
                     <label class="textinput-label" for="agent">Broker</label>
                     <input class="textinput" type="text" name="agent" value="{{ asset.Trade.FK_agent_trade.firmName }}" required>
+                    <input type="hidden" name="type" value="s">
 
                 {% endif %}
                 {% if assetType == 'p' %}
-                    <label class="textinput-label" for="name">Name for Propert</label>
-                    <input class="textinput" type="text" name="name" value="{{ asset.Property.FK_assset_property.assetName }}" required>
+                    <label class="textinput-label" for="name">Name for Property</label>
+                    <input class="textinput" type="text" name="name" value="{{ asset.Property.FK_asset_property.assetName }}" required>
 
                     <label class="textinput-label" for="street">Street Address</label>
                     <input class="textinput" type="text" name="street" value="{{ asset.Property.FK_address_property.street }}" required>
 
                     <label class="textinput-label" for="unit">Unit Number</label>
-                    <input class="textinput" type="number" name="unit" value="{{ asset.Property.FK_address_property.unitNum }}" required>
+                    <input class="textinput" type="number" name="unit" value="{{ asset.Property.FK_address_property.unitNum }}">
 
                     <label class="textinput-label" for="city">City</label>
                     <input class="textinput" type="text" name="city" value="{{ asset.Property.FK_address_property.city }}" required>
@@ -81,10 +82,11 @@
                     <input class="textinput" type="number" name="price" value="{{ asset.Trade.pricePerAsset }}" required step="0.01" min="0">
 
                     <label class="textinput-label" for="fee">Total Fees</label>
-                    <input class="textinput" type="number" name="fee" value="{{ asset.Property.totalFee }}" required step="0.01" min="0">
+                    <input class="textinput" type="number" name="fee" value="{{ asset.Property.totalfee }}" required step="0.01" min="0">
 
                     <label class="textinput-label" for="agent">Agent</label>
                     <input class="textinput" type="text" name="agent" value="{{ asset.Trade.FK_agent_trade.name }}" required>
+                    <input type="hidden" name="type" value="p">
                 {% endif %}
                 {% if assetType == 'b' %}
                     <label class="textinput-label" for="name">Descriptive Name</label>
@@ -112,10 +114,11 @@
                     <input class="textinput" type="number" name="price" value="{{ asset.Trade.pricePerAsset }}" required step="0.01" min="0.01">
 
                     <label class="textinput-label" for="quantity">Quantity</label>
-                    <input class="textinput" type="number" name="quantity" value="{{ asset.Trade.quantity }}" required step="0.01" min="0.01">
+                    <input class="textinput" type="number" name="quantity" value="{{ asset.Trade.assetQuantity }}" required step="0.01" min="0.01">
 
                     <label class="textinput-label" for="agent">Broker/Seller</label>
                     <input class="textinput" type="text" name="agent" value="{{ asset.Trade.FK_agent_trade.firmName }}" required>
+                    <input type="hidden" name="type" value="b">
                 {% endif %}
                 {% if assetType == 'm' %}
                     <label class="textinput-label" for="name">Name for Asset</label>
@@ -128,13 +131,14 @@
                     <input class="textinput" type="number" name="price" value="{{ asset.Trade.pricePerAsset }}" required step="0.01" min="0.01">
 
                     <label class="textinput-label" for="quantity">Quantity</label>
-                    <input class="textinput" type="number" name="quantity" value="{{ asset.Trade.quantity }}" required step="0.01" min="0.01">
+                    <input class="textinput" type="number" name="quantity" value="{{ asset.Trade.assetQuantity }}" required step="0.01" min="0.01">
 
                     <label class="textinput-label" for="date">Purchase Date</label>
                     <input class="textinput" type="date" name="date" value="{{ asset.Trade.tradeDate }}" required>
 
                     <label class="textinput-label" for="agent">Agent/Broker/Seller (Leave blank if none)</label>
                     <input class="textinput" type="text" name="agent" value="{{ asset.Trade.FK_agent_trade.name }}">
+                    <input type="hidden" name="type" value="m">
                 {% endif %}
             </div>
             <div id="userfields"></div>

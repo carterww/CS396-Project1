@@ -59,7 +59,7 @@ class MiscAsset(models.Model):
 # entity to desribe a realestate agent or broker
 class Agent(models.Model):
     name = models.CharField(max_length=255, null=True)
-    firmName = models.CharField(max_length=255, unique=True)
+    firmName = models.CharField(max_length=255, unique=True, null=True)
     FK_address_agent = models.ForeignKey(Address, on_delete= models.CASCADE,  null=True, unique=True)
 
 # entity to hold all fees for an agent
