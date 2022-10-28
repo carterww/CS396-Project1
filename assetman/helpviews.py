@@ -244,20 +244,23 @@ def handle_edit_misc(request, trade_id) :
 
     update_trade(request, trade, "person", None)
 
-
+# TODO refactored this slightly. Need to do everything else
 def update_trade(request, trade, agent_type, new_asset) :
     new_broker = create_agent(request, agent_type)
 
-    trade.tradeDate = request.POST.get('date')
-    trade.pricePerAsset = request.POST.get('price')
-    if request.POST.get('quantity') is not None :
-        trade.assetQuantity = request.POST.get('quantity')
-    if new_broker is not None :
-        trade.FK_agent_trade = new_broker
-    if new_asset is not None :
-        trade.FK_asset_trade = new_asset
+    fields = {
+        'tradeDate': request.POST.get('date'),
+        'pricePerAsset': request.POST.get('price')
+    }
     
-    trade.save(update_fields=['tradeDate', 'pricePerAsset', 'assetQuantity', 'FK_agent_trade', 'FK_asset_trade'])
+    if request.POST.get('quantity') is not None :
+        fields['assetQuanity'] = request.POST.get('quantity')
+    if new_broker is not None :
+        fields['FK_agent_trade'] = new_broker
+    if new_asset is not None :
+        fields['FK_asset_trade'] = new_asset
+    
+    update_model(trade, fields)
 
 
 def create_trade_args(request, agent, quantity) :
@@ -321,3 +324,18 @@ def add_user_trades(otherUserIDs, trade) :
         }
         userTradeOther = UserTrade(**userTradeOtherArgs)
         userTradeOther.save()
+
+# updates and creates a model instance
+def update_model(model, diction) :
+    """
+    Pass in a model to be added to db updated with dictionary of model attribute mapped to new value.
+    If you are creating a new instance of a model, pass in an empty one. If you are updating a model, pass
+    the existing model to be updated with a dictionary of changed model attributes. Returns the model in case
+    the user needs it to complete others.
+    """
+    for key, value in diction :
+        setattr(model, key, value)
+    model.save()
+
+    return model
+
