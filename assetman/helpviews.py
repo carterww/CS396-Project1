@@ -19,7 +19,7 @@ def handle_add_stock(request):
     }
 
     stockArgs = {
-        'ticker': request.POST.get('ticker'),
+        'ticker': request.POST.get('ticker').upper(),
         # add FK_asset_stock when asset created
     }
 
@@ -27,8 +27,6 @@ def handle_add_stock(request):
     agent = create_agent(request, 'firm')
 
     tradeArgs = create_trade_args(request, agent, request.POST.get('quantity'))
-
-    otherUserIDs = get_other_users(request)
 
     if stock is None and asset is None :
         asset = Asset(**assetArgs)
@@ -49,7 +47,7 @@ def handle_add_stock(request):
     userTrade = UserTrade(FK_user=request.user, FK_trade=trade)
     userTrade.save()
 
-    add_user_trades(otherUserIDs, trade)
+    add_user_trades(get_other_users(request), trade)
     
 
 
@@ -69,15 +67,13 @@ def handle_add_property(request):
         address = Address.objects.get(**addressArgs)
         return
     except :
-        address = Address(**addressArgs)
-        address.save()
+        address = update_model(Address(), addressArgs)
     
     assetArgs = {
         'assetName': request.POST.get('name')
     }
 
-    asset = Asset(**assetArgs)
-    asset.save()
+    asset = update_model(Asset(), assetArgs)
 
     propertyArgs = {
         'totalfee': request.POST.get('fee'),
@@ -85,8 +81,7 @@ def handle_add_property(request):
         'FK_asset_property': asset,
     }
 
-    property_ = Property(**propertyArgs)
-    property_.save()
+    update_model(Property(), propertyArgs)
 
     agent = create_agent(request, "person")
 
@@ -102,9 +97,7 @@ def handle_add_property(request):
     userTrade = UserTrade(FK_user=request.user, FK_trade=trade)
     userTrade.save()
 
-    otherUserIDs = get_other_users(request)
-
-    add_user_trades(otherUserIDs, trade)
+    add_user_trades(get_other_users(request), trade)
     
 
 def handle_add_bond(request):
@@ -125,10 +118,8 @@ def handle_add_bond(request):
     tradeArgs = create_trade_args(request, agent, request.POST.get('quantity'))
     tradeArgs['FK_asset_trade'] = asset
 
-    bond = Bond(**bondArgs)
-    bond.save()
-    trade = Trade(**tradeArgs)
-    trade.save()
+    bond = update_model(Bond(), bondArgs)
+    trade = update_model(Trade(), tradeArgs)
 
     holding = CurrentHoldings(FK_trade=trade)
     holding.save()
@@ -149,13 +140,11 @@ def handle_add_misc(request):
 
     agent = create_agent(request, "person")
 
-    misc = MiscAsset(**miscArgs)
-    misc.save()
+    update_model(MiscAsset(), miscArgs)
 
     tradeArgs = create_trade_args(request, agent, request.POST.get('quantity'))
     tradeArgs['FK_asset_trade'] = asset
-    trade = Trade(**tradeArgs)
-    trade.save()
+    trade = update_model(Trade(), tradeArgs)
 
     holding = CurrentHoldings(FK_trade=trade)
     holding.save()
@@ -181,14 +170,12 @@ def handle_edit_stock(request, trade_id) :
             'assetName': request.POST.get('name'),
         }
         stockArgs = {
-            'ticker': request.POST.get('ticker'),
+            'ticker': request.POST.get('ticker').upper(),
             # add FK_asset_stock when asset created
         }
-        asset = Asset(**assetArgs)
-        asset.save()
+        asset = update_model(Asset(), assetArgs)
         stockArgs['FK_asset_stock'] = asset
-        stock = Stock(**stockArgs)
-        stock.save()
+        stock = update_model(Stock(), stockArgs)
 
     trade = get_object_or_404(Trade, pk=trade_id)
     update_trade(request, trade, "firm", asset)
@@ -197,39 +184,48 @@ def handle_edit_property(request, trade_id) :
     trade = get_object_or_404(Trade, pk=trade_id)
     prop = get_object_or_404(Property, pk=trade.FK_asset_trade.id)
 
-    prop.totalfee = request.POST.get('fee')
-    prop.FK_address_property.street = request.POST.get('street')
-    prop.FK_address_property.city = request.POST.get('city')
-    prop.FK_address_property.state = request.POST.get('state')
-    prop.FK_address_property.zipCode = request.POST.get('zip')
+    propArgs = {
+        'totalfee': request.POST.get('fee')
+    }
+    addressArgs = {
+        'street': request.POST.get('street'),
+        'city': request.POST.get('city'),
+        'state': request.POST.get('state'),
+        'zip': request.POST.get('zip'),
+    }
 
     if request.POST.get('unit') != '':
-        prop.FK_address_property.unitNum = request.POST.get('unit')
+        addressArgs['unitNum'] = request.POST.get('unit')
     else :
-        prop.FK_address_property.unitNum = None
+        addressArgs['unitNum'] = None
 
-    prop.FK_asset_property.assetName = request.POST.get('name')
+    assetArgs = {
+        'assetName': request.POST.get('name')
+    }
 
-    prop.save()
-    prop.FK_address_property.save()
-    prop.FK_asset_property.save()
-
+    update_model(prop, propArgs)
+    update_model(prop.FK_address_property, addressArgs)
+    update_model(prop.FK_asset_property, assetArgs)
     update_trade(request, trade, "person", None)
 
 def handle_edit_bond(request, trade_id):
     trade = get_object_or_404(Trade, pk=trade_id)
     bond = get_object_or_404(Bond, pk=trade.FK_asset_trade.id)
 
-    bond.maturityDate = request.POST.get('maturity')
-    bond.interestRate = request.POST.get('rate')
-    bond.faceValue = request.POST.get('face')
-    bond.issuer = request.POST.get('issuer')
-    bond.rating = request.POST.get('rating')
-    bond.FK_asset_bond.assetName = request.POST.get('name')
+    bondFields = {
+        'maturityDate': request.POST.get('maturity'),
+        'interestRate': request.POST.get('rate'),
+        'faceValue': request.POST.get('face'),
+        'issuer': request.POST.get('issuer'),
+        'rating': request.POST.get('rating')
+    }
 
-    bond.save()
-    bond.FK_asset_bond.save()
+    assetFields = {
+        'assetName': request.POST.get('name')
+    }
 
+    update_model(bond, bondFields)
+    update_model(bond.FK_asset_bond, assetFields)
     update_trade(request, trade, "firm", None)
 
 def handle_edit_misc(request, trade_id) :
@@ -244,19 +240,10 @@ def handle_edit_misc(request, trade_id) :
 
     update_trade(request, trade, "person", None)
 
-# TODO refactored this slightly. Need to do everything else
 def update_trade(request, trade, agent_type, new_asset) :
     new_broker = create_agent(request, agent_type)
 
-    fields = {
-        'tradeDate': request.POST.get('date'),
-        'pricePerAsset': request.POST.get('price')
-    }
-    
-    if request.POST.get('quantity') is not None :
-        fields['assetQuanity'] = request.POST.get('quantity')
-    if new_broker is not None :
-        fields['FK_agent_trade'] = new_broker
+    fields = create_trade_args(request, new_broker, request.POST.get('quantity'))
     if new_asset is not None :
         fields['FK_asset_trade'] = new_asset
     
@@ -268,9 +255,10 @@ def create_trade_args(request, agent, quantity) :
         'action': 'B',
         'tradeDate': request.POST.get('date'),
         'pricePerAsset': request.POST.get('price'),
-        'assetQuantity': quantity,
         # add FK_asset_trade when asset created
     }
+    if quantity is not None :
+        tradeArgs['assetQuantity'] = quantity
     if agent is not None :
         tradeArgs['FK_agent_trade'] = agent
 
@@ -322,8 +310,7 @@ def add_user_trades(otherUserIDs, trade) :
             'FK_user': user,
             'FK_trade': trade,
         }
-        userTradeOther = UserTrade(**userTradeOtherArgs)
-        userTradeOther.save()
+        update_model(UserTrade(), userTradeOtherArgs)
 
 # updates and creates a model instance
 def update_model(model, diction) :

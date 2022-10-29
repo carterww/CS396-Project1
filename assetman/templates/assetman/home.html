@@ -46,6 +46,7 @@
                     <td>{{ stock.gain }}%</td>
                     <td><a href="editasset/{{ stock.Trade.id }}">edit</a></td>
                     <td><a href="delete/{{ stock.Trade.id }}/">delete lot</a></td>
+                    <td><a href="editasset/{{ stock.Trade.id }}"></a></td>
                 </tr>
             {% endfor %}
         </table>
@@ -64,6 +65,7 @@
                     <td>{{ property.Property.FK_address_property.street }} {{ property.Property.FK_address_property.city }}</td>
                     <td><a href="editasset/{{ property.Trade.id }}">edit</a></td>
                     <td><a href="delete/{{ property.Trade.id }}/">delete lot</a></td>
+                    <td><a href="editasset/{{ property.Trade.id }}"></a></td>
                 </tr>
             {% endfor %}
         </table>
@@ -88,6 +90,7 @@
                     <td>{{ bond.Trade.quantity }}</td>
                     <td><a href="editasset/{{ bond.Trade.id }}">edit</a></td>
                     <td><a href="delete/{{ bond.Trade.id }}/">delete lot</a></td>
+                    <td><a href="editasset/{{ bond.Trade.id }}"></a></td>
                 </tr>
             {% endfor %}
         </table>
@@ -108,6 +111,7 @@
                     <td>{{ m.Trade.Quantity }}</td>
                     <td><a href="editasset/{{ m.Trade.id }}">edit</a></td>
                     <td><a href="delete/{{ m.Trade.id }}/">delete lot</a></td>
+                    <td><a href="editasset/{{ m.Trade.id }}"></a></td>
                 </tr>
             {% endfor %}
         </table>

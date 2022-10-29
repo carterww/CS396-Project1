@@ -20,6 +20,8 @@ class StockSnapshot(models.Model):
     snapshotDate = models.DateField(null=False, default=now)
     openPrice = models.DecimalField(max_digits=9, decimal_places=2, null=False)
     closePrice = models.DecimalField(max_digits=9, decimal_places=2, null=False)
+    dayLow =  models.DecimalField(max_digits=9, decimal_places=2, null=False)
+    dayHigh =  models.DecimalField(max_digits=9, decimal_places=2, null=False)
     volume = models.BigIntegerField(null=False)
     FK_stock_snapshot = models.ForeignKey(Stock, on_delete= models.CASCADE,  null=False)
 

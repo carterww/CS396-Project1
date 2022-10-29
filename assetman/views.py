@@ -80,30 +80,43 @@ def addAsset(request) :
 # due to scope of system user can either delete the whole quanity, not part of it
 # if they would like to buy/sell extra they must edit
 @login_required(login_url='/login')
-def deleteAsset(request, trade_id):
-    responseCode, currHolding, assetTrade = check_auth_and_grab_trade(request, trade_id)
+def sellAsset(request, trade_id):
+    if request.method == 'POST' :
+        responseCode, currHolding, assetTrade = check_auth_and_grab_trade(request, trade_id)
 
-    if responseCode == 401 :
-        return HttpResponse("You are not authorized to delete this asset", status=responseCode)
+        if responseCode == 401 :
+            return HttpResponse("You are not authorized to delete this asset", status=responseCode)
 
-    sellTradeArgs = {
-        'action': 'S',
-        'assetQuantity': assetTrade.assetQuantity,
-        'FK_asset_trade': assetTrade.FK_asset_trade,
-        'FK_agent_trade': assetTrade.FK_agent_trade,
-    }
+        sellTradeArgs = {
+            'action': 'S',
+            'assetQuantity': assetTrade.assetQuantity,
+            'FK_asset_trade': assetTrade.FK_asset_trade,
+            'FK_agent_trade': assetTrade.FK_agent_trade,
+            'pricePerAsset': request.POST.get('price'),
+            'tradeDate': request.POST.get('date')
+        }
 
-    assetType, asset = get_asset_type(currHolding)
+        otherUsers = UserTrade.objects.filter(FK_trade=currHolding.FK_trade)
 
-    if currHolding is not None :
-        currHolding.delete()
-    sellTrade = Trade(**sellTradeArgs)
-    sellUserTrade = UserTrade(FK_user=request.user, FK_trade=sellTrade)
-    sellTrade.save()
-    sellUserTrade.save()
+        if currHolding is not None :
+            currHolding.delete()
+        sellTrade = Trade(**sellTradeArgs)
+        sellTrade.save()
 
+        for user in otherUsers :
+            UserTrade(FK_trade=sellTrade, FK_user=user).save()
+
+        return redirect('/assets/')
+
+    return render(request, 'assetman/sell_asset.html', {})
+
+@login_required(login_url='/login')
+def deleteTrade(request, trade_id) :
+    trade = get_object_or_404(Trade, pk=trade_id)
+    trade.delete()
 
     return redirect('/assets/')
+
 
 def queryTrades(request): 
 
@@ -111,6 +124,12 @@ def queryTrades(request):
 
     if request.method == 'POST' :
         trades = Trade.objects.filter(tradeDate=request.POST.get('date'))
+
+        for trade in trades :
+            try :
+                UserTrade.objects.get(FK_trade=trade, FK_user=request.user)
+            except :
+                trades.remove(trade)
 
         context['trades'] = trades
 

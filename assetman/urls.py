@@ -7,8 +7,9 @@ app_name = 'assetman'
 # holds all the urls and views they are associated with
 urlpatterns = [
     path('', views.home, name='assets'),
-    path('delete/<int:trade_id>/', views.deleteAsset, name='deleteAsset'),
+    path('sell/<int:trade_id>/', views.sellAsset, name='deleteAsset'),
     path('addasset/', views.addAsset, name='addAsset'),
     path('editasset/<int:trade_id>/', views.editAsset, name='editAsset'),
     path('findtrades/', views.queryTrades, name='queryTrades'),
+    path('delete/<int:trade_id>/', views.deleteTrade, name='deleteAsset'),
 ]
