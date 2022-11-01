@@ -86,6 +86,7 @@ class Trade(models.Model):
     tradeDate = models.DateField(null=False, default=now)
     pricePerAsset = models.DecimalField(max_digits=13, decimal_places=2, null=False, default=1)
     assetQuantity = models.FloatField(null=False, default=1.0)
+    FK_trade = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
     FK_asset_trade = models.ForeignKey(Asset, on_delete= models.CASCADE,  null=False)
     FK_agent_trade = models.ForeignKey(Agent, on_delete= models.CASCADE, null=True)
 
@@ -111,3 +112,11 @@ class FintechUser(models.Model):
     occupation = models.CharField(max_length=255, null=False)
     FK_address_assetUser = models.ForeignKey(Address, on_delete= models.CASCADE)
     FK_user_assetUser = models.ForeignKey(User, on_delete= models.CASCADE,  null=False, primary_key=True)
+
+class MortgageRate(models.Model) :
+    bankName = models.CharField(max_length=255, null=False, unique=True)
+    interestRate = models.DecimalField(max_digits=5, decimal_places=3, null=False)
+
+    def __str__(self) :
+        rate = f'{self.interestRate:.3f}'
+        return '%s: %s' % (self.bankName, rate)

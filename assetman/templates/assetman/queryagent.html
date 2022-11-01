@@ -31,10 +31,10 @@
         </div>
     </header>
     <div class="topic">
-        <form method="POST" action="/assets/findtrades/">
+        <form method="POST" action="/assets/agentassets/">
             {% csrf_token %}
-            <label class="textinput-label" for="date">Trade date</label>
-            <input class="textinput" type="date" name="date" required>
+            <label class="textinput-label" for="name">Agent Name</label>
+            <input class="textinput" type="text" name="name" required>
 
             <div style="text-align:center; padding-bottom:15px; padding-top:15px">
                 <button class="form-button" type="submit" name="submit_post">Submit</button>

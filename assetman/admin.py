@@ -15,4 +15,5 @@ admin.site.register(Trade)
 admin.site.register(CurrentHoldings)
 admin.site.register(UserTrade)
 admin.site.register(FintechUser)
+admin.site.register(MortgageRate)
 

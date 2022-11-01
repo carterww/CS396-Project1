@@ -93,7 +93,8 @@ def sellAsset(request, trade_id):
             'FK_asset_trade': assetTrade.FK_asset_trade,
             'FK_agent_trade': assetTrade.FK_agent_trade,
             'pricePerAsset': request.POST.get('price'),
-            'tradeDate': request.POST.get('date')
+            'tradeDate': request.POST.get('date'),
+            'FK_trade': assetTrade
         }
 
         otherUsers = UserTrade.objects.filter(FK_trade=currHolding.FK_trade)
@@ -136,6 +137,57 @@ def queryTrades(request):
         return render(request, 'assetman/showtrade.html', context)
 
     return render(request, 'assetman/querytrade.html', context)
+
+def find_agents_assets(request, agent_id) :
+    agent_trades = Trade.objects.filter(FK_agent_trade=agent_id)
+
+    assetNames = {}
+
+    for trade in agent_trades :
+        try :
+            holding = CurrentHoldings.objects.get(FK_trade=trade)
+        except :
+            continue
+
+        assetType, asset = get_asset_type(holding)
+
+        if assetType == 's' :
+            assetNames[asset.Stock.ticker] = 'Stock: '
+        elif assetType == 'p' :
+            assetNames[asset.Property.FK_address_property.city] = 'At least one Property in '
+        elif assetType == 'b' :
+            assetNames[asset.Bond.issuer] = 'Bond from '
+        elif assetType == 'm' :
+            assetNames[asset.Misc.FK_asset_misc.assetName + asset.Misc.description[0:5] + '...'] = 'Misc'
+
+        context = {
+            'assets': assetNames,
+        }
+
+        return render(request, 'assetman/agent_trades.html', context)
+
+def get_agent_id(request) :
+    
+    if request.method == 'POST':
+        agentName = request.POST.get('name').lower()
+
+        agents = Agent.objects.filter(name=agentName)
+        agents2 = Agent.objects.filter(firmName=agentName)
+
+        for agent in agents :
+            return redirect('/assets/agentassets/' + str(agent.id) + '/')
+
+        for agent in agents2 :
+            return redirect('/assets/agentassets/' + str(agent.id) + '/')
+
+
+
+    return render(request, 'assetman/queryagent.html', {})
+
+def mortgagerates(request) :
+
+    return render(request, 'assetman/mortgagerates.html', {'rates': MortgageRate.objects.all() })
+
 
 def check_auth_and_grab_trade(request, trade_id) :
     currHolding = get_object_or_404(CurrentHoldings, FK_trade=trade_id)

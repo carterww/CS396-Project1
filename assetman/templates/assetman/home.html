@@ -15,6 +15,8 @@
         <div>
             <ul class="navbar">
                 <li><a href="">Assets</a></li>
+                <li><a href="/assets/addasset/">Add Trade</a></li>
+                <li><a href="/assets/findtrades/">Find Trade</a></li>
                 {% if request.user.is_authenticated %}
                 <li style="float:right">
                     <a href="{% url 'fintech:logout' %}">Logout</a>
@@ -46,7 +48,7 @@
                     <td>{{ stock.gain }}%</td>
                     <td><a href="editasset/{{ stock.Trade.id }}">edit</a></td>
                     <td><a href="delete/{{ stock.Trade.id }}/">delete lot</a></td>
-                    <td><a href="editasset/{{ stock.Trade.id }}"></a></td>
+                    <td><a href="sell/{{ stock.Trade.id }}">sell</a></td>
                 </tr>
             {% endfor %}
         </table>
@@ -65,7 +67,7 @@
                     <td>{{ property.Property.FK_address_property.street }} {{ property.Property.FK_address_property.city }}</td>
                     <td><a href="editasset/{{ property.Trade.id }}">edit</a></td>
                     <td><a href="delete/{{ property.Trade.id }}/">delete lot</a></td>
-                    <td><a href="editasset/{{ property.Trade.id }}"></a></td>
+                    <td><a href="sell/{{ property.Trade.id }}">sell</a></td>
                 </tr>
             {% endfor %}
         </table>
@@ -90,7 +92,7 @@
                     <td>{{ bond.Trade.quantity }}</td>
                     <td><a href="editasset/{{ bond.Trade.id }}">edit</a></td>
                     <td><a href="delete/{{ bond.Trade.id }}/">delete lot</a></td>
-                    <td><a href="editasset/{{ bond.Trade.id }}"></a></td>
+                    <td><a href="sell/{{ bond.Trade.id }}">sell</a></td>
                 </tr>
             {% endfor %}
         </table>
@@ -111,7 +113,7 @@
                     <td>{{ m.Trade.Quantity }}</td>
                     <td><a href="editasset/{{ m.Trade.id }}">edit</a></td>
                     <td><a href="delete/{{ m.Trade.id }}/">delete lot</a></td>
-                    <td><a href="editasset/{{ m.Trade.id }}"></a></td>
+                    <td><a href="sell/{{ m.Trade.id }}">sell</a></td>
                 </tr>
             {% endfor %}
         </table>

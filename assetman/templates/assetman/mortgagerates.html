@@ -30,17 +30,12 @@
             </ul>
         </div>
     </header>
-    <div class="topic">
-        <form method="POST" action="/assets/findtrades/">
-            {% csrf_token %}
-            <label class="textinput-label" for="date">Trade date</label>
-            <input class="textinput" type="date" name="date" required>
 
-            <div style="text-align:center; padding-bottom:15px; padding-top:15px">
-                <button class="form-button" type="submit" name="submit_post">Submit</button>
-            </div>
-        </form>
+    <div class="topic">
+        {% for rate in rates %}
+            <h1>{{ rate }}%</h1>
+        {% endfor %}
     </div>
 
-</body>
+    </body>
 </html>

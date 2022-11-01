@@ -30,17 +30,20 @@
             </ul>
         </div>
     </header>
-    <div class="topic">
-        <form method="POST" action="/assets/findtrades/">
-            {% csrf_token %}
-            <label class="textinput-label" for="date">Trade date</label>
-            <input class="textinput" type="date" name="date" required>
 
-            <div style="text-align:center; padding-bottom:15px; padding-top:15px">
-                <button class="form-button" type="submit" name="submit_post">Submit</button>
-            </div>
-        </form>
+    <div class="topic">
+        {% for assetName, identifier in assets.items %}
+            {% if identifier == 'Stock: ' %}
+                <h1>{{ identifier }} {{ assetName }}</h1>
+            {% elif identifier == 'At least one Property in ' %}
+                <h1>{{ identifier }} {{ assetName }}</h1>
+            {% elif identifier == 'Bond from ' %}
+                <h1>{{ identifier }} {{ assetName }}</h1>
+            {% else %}
+                <h1>{{ assetName }}</h1>
+            {% endif %}
+        {% endfor %}
     </div>
 
-</body>
+    </body>
 </html>

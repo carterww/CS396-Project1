@@ -9,13 +9,13 @@ def handle_add_stock(request):
     stock = None
 
     try :
-        stock = Stock.objects.get(ticker=request.POST.get('ticker'))
+        stock = Stock.objects.get(ticker=request.POST.get('ticker').upper())
         asset = Asset.objects.get(id=stock.FK_asset_stock.id)
     except :
         stock = None
 
     assetArgs = {
-        'assetName': request.POST.get('name'),
+        'assetName': request.POST.get('name').lower(),
     }
 
     stockArgs = {
@@ -54,10 +54,10 @@ def handle_add_stock(request):
 
 def handle_add_property(request):
     addressArgs = {
-        'street': request.POST.get('street'),
+        'street': request.POST.get('street').lower(),
         'zipCode': request.POST.get('zip'),
-        'state': request.POST.get('state'),
-        'city': request.POST.get('city'),
+        'state': request.POST.get('state').lower(),
+        'city': request.POST.get('city').lower(),
     }
 
     if request.POST.get('unit') != '' :
@@ -101,14 +101,14 @@ def handle_add_property(request):
     
 
 def handle_add_bond(request):
-    asset = Asset(assetName=request.POST.get('name'))
+    asset = Asset(assetName=request.POST.get('name').lower())
     asset.save()
 
     bondArgs = {
         'maturityDate': request.POST.get('maturity'),
         'interestRate': request.POST.get('rate'),
         'faceValue': request.POST.get('face'),
-        'issuer': request.POST.get('issuer'),
+        'issuer': request.POST.get('issuer').lower(),
         'rating': request.POST.get('rating'),
         'FK_asset_bond': asset,
     }
@@ -130,11 +130,11 @@ def handle_add_bond(request):
     add_user_trades(get_other_users(request), trade)
 
 def handle_add_misc(request):
-    asset = Asset(assetName=request.POST.get('name'))
+    asset = Asset(assetName=request.POST.get('name').lower())
     asset.save()
 
     miscArgs = {
-        'description': request.POST.get('description'),
+        'description': request.POST.get('description').lower(),
         'FK_asset_misc': asset
     }
 
@@ -160,14 +160,14 @@ def handle_edit_stock(request, trade_id) :
     stock = None
 
     try :
-        stock = Stock.objects.get(ticker=request.POST.get('ticker'))
+        stock = Stock.objects.get(ticker=request.POST.get('ticker').upper())
         asset = Asset.objects.get(id=stock.FK_asset_stock.id)
     except :
         stock = None
 
     if stock is None and asset is None :
         assetArgs = {
-            'assetName': request.POST.get('name'),
+            'assetName': request.POST.get('name').lower(),
         }
         stockArgs = {
             'ticker': request.POST.get('ticker').upper(),
@@ -188,9 +188,9 @@ def handle_edit_property(request, trade_id) :
         'totalfee': request.POST.get('fee')
     }
     addressArgs = {
-        'street': request.POST.get('street'),
-        'city': request.POST.get('city'),
-        'state': request.POST.get('state'),
+        'street': request.POST.get('street').lower(),
+        'city': request.POST.get('city').lower(),
+        'state': request.POST.get('state').lower(),
         'zip': request.POST.get('zip'),
     }
 
@@ -200,7 +200,7 @@ def handle_edit_property(request, trade_id) :
         addressArgs['unitNum'] = None
 
     assetArgs = {
-        'assetName': request.POST.get('name')
+        'assetName': request.POST.get('name').lower()
     }
 
     update_model(prop, propArgs)
@@ -216,12 +216,12 @@ def handle_edit_bond(request, trade_id):
         'maturityDate': request.POST.get('maturity'),
         'interestRate': request.POST.get('rate'),
         'faceValue': request.POST.get('face'),
-        'issuer': request.POST.get('issuer'),
+        'issuer': request.POST.get('issuer').lower(),
         'rating': request.POST.get('rating')
     }
 
     assetFields = {
-        'assetName': request.POST.get('name')
+        'assetName': request.POST.get('name').lower()
     }
 
     update_model(bond, bondFields)
@@ -232,8 +232,8 @@ def handle_edit_misc(request, trade_id) :
     trade = get_object_or_404(Trade, pk=trade_id)
     misc = get_object_or_404(MiscAsset, pk=trade.FK_asset_trade.id)
 
-    misc.description = request.POST.get('description')
-    misc.FK_asset_misc.assetName = request.POST.get('name')
+    misc.description = request.POST.get('description').lower()
+    misc.FK_asset_misc.assetName = request.POST.get('name').lower()
 
     misc.save()
     misc.FK_asset_misc.save()
@@ -270,16 +270,16 @@ def create_agent(request, type_) :
         return None
     try :
         if type_ == 'firm' :
-            agent = Agent.objects.get(firmName=request.POST.get('agent'))
+            agent = Agent.objects.get(firmName=request.POST.get('agent').lower())
         elif type_ == 'person' :
-            agent = Agent.objects.get(name=request.POST.get('agent'))
+            agent = Agent.objects.get(name=request.POST.get('agent').lower())
     except :
         if agent is None :
             if type_ == 'firm' :
-                agent = Agent(firmName=request.POST.get('agent'))
+                agent = Agent(firmName=request.POST.get('agent').lower())
                 agent.save()
             elif type_ == 'person' :
-                agent = Agent(name=request.POST.get('agent'))
+                agent = Agent(name=request.POST.get('agent').lower())
                 agent.save()
 
     return agent
@@ -326,3 +326,24 @@ def update_model(model, diction) :
 
     return model
 
+def calculate_gain(user, date_begin, date_end) :
+    userTrades = UserTrade.objects.filter(FK_user=user)
+
+    gain = 0
+    purchase_price = 0
+
+
+    buys = []
+
+    for ut in userTrades :
+        if (ut.FK_trade.tradeDate <= date_end and ut.FK_trade.tradeDate >= date_begin) :
+            if (ut.FK_trade.action == 'B') :
+                buys.append(ut.FK_trade)
+                continue
+            else :
+                for trade in buys :
+                    if (trade.id == ut.FK_trade.FK_trade.id) :
+                        purchase_price += trade.assetQuantity * trade.pricePerAsset
+                        gain += (ut.FK_trade.assetQuantity * ut.FK_trade.pricePerAsset) - (trade.assetQuantity * trade.pricePerAsset)
+
+    return gain, (gain / purchase_price * 100)

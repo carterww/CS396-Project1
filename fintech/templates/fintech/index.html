@@ -16,6 +16,7 @@
             <ul class="navbar">
                 <li><a href="">Forum</a></li>
                 <li class="activenavbar"><a href="">Topics</a></li>
+                <li><a href="assets/">Asset Management</a></li>
                 {% if request.user.is_authenticated %}
                 <li style="float:right">
                     <a href="{% url 'fintech:logout' %}">Logout</a>
