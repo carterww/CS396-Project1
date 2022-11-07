@@ -30,22 +30,27 @@
             </ul>
         </div>
     </header>
-
-    <div class="topic" style="padding:20px">
-        <h1 class="header">The Agent manages the following: </h1>
-        {% for assetName, identifier in assets.items %}
-            {% if identifier == 'Stock: ' %}
-                <h2 class="topicheader">{{ identifier }} {{ assetName }}</h1>
-            {% elif identifier == 'At least one Property in ' %}
-                <h2 class="topicheader">{{ identifier }} {{ assetName }}</h1>
-            {% elif identifier == 'Bond from ' %}
-                <h2 class="topicheader">{{ identifier }} {{ assetName }}</h1>
-            {% else %}
-                <h2 class="topicheader">{{ assetName }}</h1>
-            {% endif %}
-            </br>
-        {% endfor %}
+    <div class="topic">
+        {% if snapShot %}
+            <h1 class="header">Stock details for {{ stock.ticker }} on {{ date }}</h1>
+            <table>
+                <tr>
+                    <th>Open Price</th>
+                    <th>Close Price</th>
+                    <th>High Price</th>
+                    <th>Volume</th>
+                </tr>
+                <tr>
+                    <td>${{ snapShot.openPrice }}</td>
+                    <td>${{ snapShot.closePrice }}</td>
+                    <td>${{ snapShot.dayHigh }}</td>
+                    <td>{{ snapShot.volume }}</td>
+                </tr>
+            </table>
+        {% else %}
+            <h1 class="header" style="padding:20px">No data found for that stock on {{ date }}</h1>
+        {% endif %}
     </div>
 
-    </body>
+</body>
 </html>

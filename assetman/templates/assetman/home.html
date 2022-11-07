@@ -22,7 +22,7 @@
                     <a href="{% url 'fintech:logout' %}">Logout</a>
                 </li>
                 <li style="float:right">
-                    <a href="">Account Settings</a>
+                    <a href="/assets/account/">Account Settings</a>
                 </li>
                 {% else %}
                 <li style="float:right">
@@ -32,91 +32,114 @@
             </ul>
         </div>
     </header>
-        {% if stocks %}
-        <table style="color:white">
-            <tr>
-                <th>Stock</th>
-                <th>Ticker</th>
-                <th>Quantity</th>
-                <th>Gain/Loss</th>
-            </tr>
-            {% for stock in stocks %}
+        <div class="topic" style="padding:6px 20px 20px 20px">
+            <h1 class="header">Currently Held Assets</h1>
+            {% if stocks %}
+            <table>
                 <tr>
-                    <td>{{ stock.Stock.FK_asset_stock.assetName }}</td>
-                    <td>{{ stock.Stock.ticker }}</td>
-                    <td>{{ stock.Trade.assetQuantity }}</td>
-                    <td>{{ stock.gain }}%</td>
-                    <td><a href="editasset/{{ stock.Trade.id }}">edit</a></td>
-                    <td><a href="delete/{{ stock.Trade.id }}/">delete lot</a></td>
-                    <td><a href="sell/{{ stock.Trade.id }}">sell</a></td>
+                    <th>Stock</th>
+                    <th>Ticker</th>
+                    <th>Quantity</th>
+                    <th>Cost Basis/Share</th>
                 </tr>
-            {% endfor %}
-        </table>
-        {% endif %}
-        {% if properties %}
-        <table style="color:white">
-            <tr>
-                <th>Property</th>
-                <th>Fee</th>
-                <th>Address</th>
-            </tr>
-            {% for property in properties %}
+                {% for stock in stocks %}
+                    <tr>
+                        <td>{{ stock.Stock.FK_asset_stock.assetName }}</td>
+                        <td>{{ stock.Stock.ticker }}</td>
+                        <td>{{ stock.Trade.assetQuantity }}</td>
+                        <td>${{ stock.Trade.pricePerAsset }}</td>
+                        <td><a href="editasset/{{ stock.Trade.id }}">edit</a></td>
+                        <td><a href="delete/{{ stock.Trade.id }}/">delete lot</a></td>
+                        <td><a href="sell/{{ stock.Trade.id }}">sell</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+            {% if properties %}
+            </br>
+            <table>
                 <tr>
-                    <td>{{ property.Property.FK_asset_property.assetName }}</td>
-                    <td>{{ property.Property.totalFee }}</td>
-                    <td>{{ property.Property.FK_address_property.street }} {{ property.Property.FK_address_property.city }}</td>
-                    <td><a href="editasset/{{ property.Trade.id }}">edit</a></td>
-                    <td><a href="delete/{{ property.Trade.id }}/">delete lot</a></td>
-                    <td><a href="sell/{{ property.Trade.id }}">sell</a></td>
+                    <th>Property</th>
+                    <th>Cost</th>
+                    <th>Fee</th>
+                    <th>Address</th>
+                    <th>Agent</th>
                 </tr>
-            {% endfor %}
-        </table>
-        {% endif %}
-        {% if bonds %}
-        <table style="color:white">
-            <tr>
-                <th>Issuer</th>
-                <th>Interest Rate</th>
-                <th>Face Value</th>
-                <th>Maturity Date</th>
-                <th>Purchase Price</th>
-                <th>Quantity</th>
-            </tr>
-            {% for bond in bonds %}
+                {% for property in properties %}
+                    <tr>
+                        <td>{{ property.Property.FK_asset_property.assetName }}</td>
+                        <td>${{ property.Trade.pricePerAsset }}</td>
+                        <td>${{ property.Property.totalfee }}</td>
+                        <td>{{ property.Property.FK_address_property.street }} {{ property.Property.FK_address_property.city }}</td>
+                        <td>{{ property.Trade.FK_agent_trade.name }}</td>
+                        <td><a href="editasset/{{ property.Trade.id }}">edit</a></td>
+                        <td><a href="delete/{{ property.Trade.id }}/">delete lot</a></td>
+                        <td><a href="sell/{{ property.Trade.id }}">sell</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+            {% if bonds %}
+            </br>
+            <table>
                 <tr>
-                    <td>{{ bond.Bond.issuer }}</td>
-                    <td>{{ bond.Bond.interestRate }}</td>
-                    <td>{{ bond.Bond.faceValue }}</td>
-                    <td>{{ bond.Bond.maturityDate }}</td>
-                    <td>{{ bond.Trade.pricePerAsset }}</td>
-                    <td>{{ bond.Trade.quantity }}</td>
-                    <td><a href="editasset/{{ bond.Trade.id }}">edit</a></td>
-                    <td><a href="delete/{{ bond.Trade.id }}/">delete lot</a></td>
-                    <td><a href="sell/{{ bond.Trade.id }}">sell</a></td>
+                    <th>Issuer</th>
+                    <th>Interest Rate</th>
+                    <th>Face Value</th>
+                    <th>Maturity Date</th>
+                    <th>Purchase Price</th>
+                    <th>Quantity</th>
+                    <th>Rating</th>
                 </tr>
-            {% endfor %}
-        </table>
-        {% endif %}
-        {% if misc %}
-        <table style="color:white">
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Purchase Price</th>
-                <th>Quantity</th>
-            </tr>
-            {% for m in misc %}
+                {% for bond in bonds %}
+                    <tr>
+                        <td>{{ bond.Bond.issuer }}</td>
+                        <td>{{ bond.Bond.interestRate }}%</td>
+                        <td>${{ bond.Bond.faceValue }}</td>
+                        <td>{{ bond.Bond.maturityDate }}</td>
+                        <td>${{ bond.Trade.pricePerAsset }}</td>
+                        <td>{{ bond.Trade.assetQuantity }}</td>
+                        <td>{{ bond.Bond.rating }}</td>
+                        <td><a href="editasset/{{ bond.Trade.id }}">edit</a></td>
+                        <td><a href="delete/{{ bond.Trade.id }}/">delete lot</a></td>
+                        <td><a href="sell/{{ bond.Trade.id }}">sell</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+            {% if misc %}
+            </br>
+            <table>
                 <tr>
-                    <td>{{ m.Misc.FK_asset_misc.assetName }}</td>
-                    <td>{{ m.Misc.description }}</td>
-                    <td>{{ m.Trade.pricePerAsset }}</td>
-                    <td>{{ m.Trade.Quantity }}</td>
-                    <td><a href="editasset/{{ m.Trade.id }}">edit</a></td>
-                    <td><a href="delete/{{ m.Trade.id }}/">delete lot</a></td>
-                    <td><a href="sell/{{ m.Trade.id }}">sell</a></td>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Purchase Price</th>
+                    <th>Quantity</th>
                 </tr>
-            {% endfor %}
-        </table>
-        {% endif %}
+                {% for m in misc %}
+                    <tr>
+                        <td>{{ m.Misc.FK_asset_misc.assetName }}</td>
+                        <td>{{ m.Misc.description }}</td>
+                        <td>${{ m.Trade.pricePerAsset }}</td>
+                        <td>{{ m.Trade.assetQuantity }}</td>
+                        <td><a href="editasset/{{ m.Trade.id }}">edit</a></td>
+                        <td><a href="delete/{{ m.Trade.id }}/">delete lot</a></td>
+                        <td><a href="sell/{{ m.Trade.id }}">sell</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+            <div style="text-align:center; padding:15px 0px">
+                <h2 class="topicheader">Queries</h2>
+                </br>
+            </div>
+                <h3 class="topicheader"><a href="/assets/agentassets/"  style="color:crimson">1. Find assets managed by an agent</a></h3>
+                </br>
+                <h3 class="topicheader"><a href="/assets/mortgagerates/"  style="color:crimson">2. Discover mortgage rates</a></h3>
+                </br>
+                <h3 class="topicheader"><a href="/assets/gain/"  style="color:crimson">3. Find gain over a period of time</a></h3>
+                </br>
+                <h3 class="topicheader"><a href="/assets/stock/"  style="color:crimson">4. Get stock information for a day</a></h3>
+        </div>
     </body>
 </html>

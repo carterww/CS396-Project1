@@ -63,11 +63,7 @@ def handle_add_property(request):
     if request.POST.get('unit') != '' :
         addressArgs['unitNum'] = request.POST.get('unit')
 
-    try :
-        address = Address.objects.get(**addressArgs)
-        return
-    except :
-        address = update_model(Address(), addressArgs)
+    address = update_model(Address(), addressArgs)
     
     assetArgs = {
         'assetName': request.POST.get('name')
@@ -286,20 +282,25 @@ def create_agent(request, type_) :
 
 def get_other_users(request) :
     numUsers = int(request.POST.get('numusers'))
-    otherUserIDs = {}
+    otherUserIDs = []
     if numUsers > 0 :
         i = 1
-        while i <= numUsers :
+        while i <= numUsers + 1 :
             username = request.POST.get('user' + str(i))
             if username is not None or username != '' :
                 user = None
                 try :
                     user = User.objects.get(username=username)
+                    if user == request.user :
+                        i += 1
+                        continue
                 except :
+                    i += 1
                     continue
 
                 if user is not None :
                     otherUserIDs.append(user.id)
+            i += 1
 
 
     return otherUserIDs
@@ -307,7 +308,7 @@ def get_other_users(request) :
 def add_user_trades(otherUserIDs, trade) :
     for user in otherUserIDs :
         userTradeOtherArgs = {
-            'FK_user': user,
+            'FK_user': User.objects.get(pk=user),
             'FK_trade': trade,
         }
         update_model(UserTrade(), userTradeOtherArgs)
@@ -320,7 +321,7 @@ def update_model(model, diction) :
     the existing model to be updated with a dictionary of changed model attributes. Returns the model in case
     the user needs it to complete others.
     """
-    for key, value in diction :
+    for key, value in diction.items() :
         setattr(model, key, value)
     model.save()
 
@@ -333,17 +334,22 @@ def calculate_gain(user, date_begin, date_end) :
     purchase_price = 0
 
 
-    buys = []
+    buys = {}
 
     for ut in userTrades :
         if (ut.FK_trade.tradeDate <= date_end and ut.FK_trade.tradeDate >= date_begin) :
             if (ut.FK_trade.action == 'B') :
-                buys.append(ut.FK_trade)
+                buys[ut.FK_trade.id] = ut.FK_trade
                 continue
             else :
-                for trade in buys :
-                    if (trade.id == ut.FK_trade.FK_trade.id) :
-                        purchase_price += trade.assetQuantity * trade.pricePerAsset
-                        gain += (ut.FK_trade.assetQuantity * ut.FK_trade.pricePerAsset) - (trade.assetQuantity * trade.pricePerAsset)
-
+                try :
+                    trade = buys[ut.FK_trade.FK_trade.id]
+                except:
+                    continue
+                if (trade.id == ut.FK_trade.FK_trade.id) :
+                    purchase_price += trade.assetQuantity * float(trade.pricePerAsset)
+                    gain += (ut.FK_trade.assetQuantity * float(ut.FK_trade.pricePerAsset)) - (trade.assetQuantity * float(trade.pricePerAsset))
+                del buys[ut.FK_trade.FK_trade.id]
+    if purchase_price == 0 :
+        return 0, 0
     return gain, (gain / purchase_price * 100)

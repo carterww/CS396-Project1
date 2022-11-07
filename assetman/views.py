@@ -1,4 +1,5 @@
 from ctypes import sizeof
+import datetime
 from django.shortcuts import render
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
@@ -105,7 +106,7 @@ def sellAsset(request, trade_id):
         sellTrade.save()
 
         for user in otherUsers :
-            UserTrade(FK_trade=sellTrade, FK_user=user).save()
+            UserTrade(FK_trade=sellTrade, FK_user=user.FK_user).save()
 
         return redirect('/assets/')
 
@@ -118,29 +119,32 @@ def deleteTrade(request, trade_id) :
 
     return redirect('/assets/')
 
-
+@login_required(login_url='/login')
 def queryTrades(request): 
 
     context = {}
 
     if request.method == 'POST' :
         trades = Trade.objects.filter(tradeDate=request.POST.get('date'))
+        trades2 = []
 
         for trade in trades :
             try :
                 UserTrade.objects.get(FK_trade=trade, FK_user=request.user)
+                trades2.append(trade)
             except :
-                trades.remove(trade)
+                0
 
-        context['trades'] = trades
+        context['trades'] = trades2
 
         return render(request, 'assetman/showtrade.html', context)
 
     return render(request, 'assetman/querytrade.html', context)
 
+@login_required(login_url='/login')
 def find_agents_assets(request, agent_id) :
     agent_trades = Trade.objects.filter(FK_agent_trade=agent_id)
-
+    context = {}
     assetNames = {}
 
     for trade in agent_trades :
@@ -160,11 +164,55 @@ def find_agents_assets(request, agent_id) :
         elif assetType == 'm' :
             assetNames[asset.Misc.FK_asset_misc.assetName + asset.Misc.description[0:5] + '...'] = 'Misc'
 
+        context['assets'] = assetNames
+
+    return render(request, 'assetman/agent_trades.html', context)
+
+@login_required(login_url='/login')
+def account_settings(request) :
+    context = {}
+    fintechUser = None
+
+    try :
+        fintechUser = FintechUser.objects.get(pk=request.user)
+        context['age'] = fintechUser.age
+        context['sex'] = fintechUser.sex
+        context['occupation'] = fintechUser.occupation
+    except :
+        fintechUser = FintechUser()
+        context['age'] = ''
+        context['sex'] = ''
+        context['occupation'] = ''
+
+    if request.method == 'POST':
+        fintechUser.age = request.POST.get('age')
+        fintechUser.sex = request.POST.get('sex').lower()
+        fintechUser.occupation = request.POST.get('occupation').lower()
+
+        fintechUser.save()
+
+        return redirect('/assets/')
+
+    return render(request, 'assetman/accountsettings.html', context)
+
+@login_required(login_url='/login')
+def get_gain(request):
+    if request.method == 'POST':
+        date_begin = datetime.datetime.strptime(request.POST.get('begin'), '%Y-%m-%d').date()
+        date_end = datetime.datetime.strptime(request.POST.get('end'), '%Y-%m-%d').date()
+
+        gainD, gainP = calculate_gain(request.user, date_begin, date_end)
+
         context = {
-            'assets': assetNames,
+            'gainD': gainD,
+            'gainP': gainP,
+            'begin': request.POST.get('begin'),
+            'end': request.POST.get('end'),
         }
 
-        return render(request, 'assetman/agent_trades.html', context)
+        return render(request, 'assetman/gain.html', context)
+    
+    return render(request, 'assetman/gainform.html', {})
 
 def get_agent_id(request) :
     
@@ -185,8 +233,27 @@ def get_agent_id(request) :
     return render(request, 'assetman/queryagent.html', {})
 
 def mortgagerates(request) :
+    rates = MortgageRate.objects.all().order_by('interestRate').values()
 
-    return render(request, 'assetman/mortgagerates.html', {'rates': MortgageRate.objects.all() })
+    return render(request, 'assetman/mortgagerates.html', {'rates': rates })
+
+def get_stock(request) :
+    context = {}
+
+    if request.method == 'POST':
+        stock = None
+        snapShot = None
+        try :
+            stock = Stock.objects.get(ticker=request.POST.get('ticker').upper())
+            snapShot = StockSnapshot.objects.get(FK_stock_snapshot=stock, snapshotDate=request.POST.get('date'))
+            context['stock'] = stock
+            context['snapShot'] = snapShot
+        except :
+            0
+        context['date'] = request.POST.get('date')
+        return render(request, 'assetman/stock.html', context)
+
+    return render(request, 'assetman/stockform.html', context)
 
 
 def check_auth_and_grab_trade(request, trade_id) :

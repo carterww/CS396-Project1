@@ -15,4 +15,7 @@ urlpatterns = [
     path('agentassets/<int:agent_id>/', views.find_agents_assets, name='queryAgentTradesResult'),
     path('agentassets/', views.get_agent_id, name='queryAgentTrades'),
     path('mortgagerates/', views.mortgagerates, name='mortgageRates'),
+    path('gain/', views.get_gain, name='calculateGain'),
+    path('account/', views.account_settings, name='accountSettings'),
+    path('stock/', views.get_stock, name='getStock')
 ]

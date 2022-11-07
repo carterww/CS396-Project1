@@ -30,22 +30,24 @@
             </ul>
         </div>
     </header>
+    
+    <div class="topic">
+        <form method="post" action="">
+            {% csrf_token %}
+            <label class="textinput-label" for="age">Age</label>
+            <input class="textinput" type="number" name="age" value="{{ age }}">
 
-    <div class="topic" style="padding:20px">
-        <h1 class="header">The Agent manages the following: </h1>
-        {% for assetName, identifier in assets.items %}
-            {% if identifier == 'Stock: ' %}
-                <h2 class="topicheader">{{ identifier }} {{ assetName }}</h1>
-            {% elif identifier == 'At least one Property in ' %}
-                <h2 class="topicheader">{{ identifier }} {{ assetName }}</h1>
-            {% elif identifier == 'Bond from ' %}
-                <h2 class="topicheader">{{ identifier }} {{ assetName }}</h1>
-            {% else %}
-                <h2 class="topicheader">{{ assetName }}</h1>
-            {% endif %}
-            </br>
-        {% endfor %}
+            <label class="textinput-label" for="sex">Sex</label>
+            <input class="textinput" type="text" name="sex" value="{{ sex }}">
+
+            <label class="textinput-label" for="occupation">Occupation</label>
+            <input class="textinput" type="text" name="occupation" value="{{ occupation }}">
+
+            <div style="text-align:center; padding-bottom:15px; padding-top:15px">
+                <button class="form-button" type="submit" name="submit_post">Submit</button>
+            </div>
+        </form>
     </div>
 
-    </body>
+</body>
 </html>

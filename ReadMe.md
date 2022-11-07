@@ -9,6 +9,15 @@ This is a Web Application that implements a forum that fulfills the requirements
 8.     Show a warning a message/sign to remind users that there is an update or something interesting posted in the forum (words/content/…etc).
 9.     Your Website interface should be friendly.
 
+It also provides the ability to run these queries:
+Query 1. For a user, list all transaction details (asset name, price, unit, total amount, agent, etc) on a specific date (e.g. 02/15/2022).
+Query 2. For a stock ticker, list its open/close/high/volume on a specific date. 
+Query 3. For a property, list its address/price(s)/agent names. 
+Query 4. For a bond, list its bond issuer name/yield/maturity date/rating
+Query 5, List all assets that an agent manages.
+Query 6. Rank loan/mortgage rates offered by banks.
+Query 7. For a user, list the gain/loss over a period of time. 
+
 In order to setup this repository, there are a couple of dependencies that need to install.
 -       Install Python v 3.10.6 
             - Other versions will likely work but this is the version it was developed in

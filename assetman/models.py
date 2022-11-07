@@ -27,11 +27,6 @@ class StockSnapshot(models.Model):
 
 # entity for an address
 class Address(models.Model):
-    class Meta:
-        constraints = [
-            models.CheckConstraint(check=models.Q(zipCode__lte=100000), name='zipCode_lte_100000'),
-            models.UniqueConstraint(fields=['street', 'city', 'state', 'zipCode', 'unitNum'], name='uniqueAddress'),
-        ]
     street = models.CharField(max_length=255, null=False)
     zipCode = models.IntegerField()
     state = models.CharField(max_length=2, null=False)
@@ -66,11 +61,6 @@ class Agent(models.Model):
 
 # entity to hold all fees for an agent
 class AgentFee(models.Model):
-    class Meta:
-        constraints = [
-            models.CheckConstraint(check=models.Q(feeType='F') | models.Q(feeType='R'), name='feeConstraint'),
-        ]
-    feeType = models.CharField(max_length=1, null=False)   # F for flat R for rate
     feeRate = models.DecimalField(max_digits=5, decimal_places=3)
     feeFlat = models.DecimalField(max_digits=9, decimal_places=2)
     feeDescription = models.CharField(max_length=255)
@@ -110,7 +100,7 @@ class FintechUser(models.Model):
     age = models.SmallIntegerField(null=False)
     sex = models.CharField(max_length=1, null=False)
     occupation = models.CharField(max_length=255, null=False)
-    FK_address_assetUser = models.ForeignKey(Address, on_delete= models.CASCADE)
+    FK_address_assetUser = models.ForeignKey(Address, on_delete= models.CASCADE, null=True)
     FK_user_assetUser = models.ForeignKey(User, on_delete= models.CASCADE,  null=False, primary_key=True)
 
 class MortgageRate(models.Model) :

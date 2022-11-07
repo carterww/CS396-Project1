@@ -30,22 +30,11 @@
             </ul>
         </div>
     </header>
-
     <div class="topic" style="padding:20px">
-        <h1 class="header">The Agent manages the following: </h1>
-        {% for assetName, identifier in assets.items %}
-            {% if identifier == 'Stock: ' %}
-                <h2 class="topicheader">{{ identifier }} {{ assetName }}</h1>
-            {% elif identifier == 'At least one Property in ' %}
-                <h2 class="topicheader">{{ identifier }} {{ assetName }}</h1>
-            {% elif identifier == 'Bond from ' %}
-                <h2 class="topicheader">{{ identifier }} {{ assetName }}</h1>
-            {% else %}
-                <h2 class="topicheader">{{ assetName }}</h1>
-            {% endif %}
-            </br>
-        {% endfor %}
+        <h1 class="header">From {{ begin }} to {{ end }}</h1>
+        <h3 class="topicheader">Dollars Gained: ${{ gainD|floatformat:2 }}</h1>
+        <h3 class="topicheader">Percent Gain: {{ gainP|floatformat:2 }}%</h1>
     </div>
 
-    </body>
+</body>
 </html>

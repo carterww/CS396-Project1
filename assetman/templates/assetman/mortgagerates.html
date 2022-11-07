@@ -20,7 +20,7 @@
                     <a href="{% url 'fintech:logout' %}">Logout</a>
                 </li>
                 <li style="float:right">
-                    <a href="">Account Settings</a>
+                    <a href="/assets/account/">Account Settings</a>
                 </li>
                 {% else %}
                 <li style="float:right">
@@ -31,9 +31,11 @@
         </div>
     </header>
 
-    <div class="topic">
+    <div class="topic" style="padding:20px">
+        <h1 class="header">30 Year Fixed-Rate Mortgages</h1>
         {% for rate in rates %}
-            <h1>{{ rate }}%</h1>
+            <h2 class="topicheader">{{ forloop.counter }}. {{ rate.bankName }} {{ rate.interestRate }}%</h1>
+            </br>
         {% endfor %}
     </div>
 
