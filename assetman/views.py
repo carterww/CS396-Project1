@@ -178,16 +178,19 @@ def account_settings(request) :
         context['age'] = fintechUser.age
         context['sex'] = fintechUser.sex
         context['occupation'] = fintechUser.occupation
+        context['income'] = fintechUser.yearly_income
     except :
         fintechUser = FintechUser()
         context['age'] = ''
         context['sex'] = ''
         context['occupation'] = ''
+        context['income'] = None
 
     if request.method == 'POST':
         fintechUser.age = request.POST.get('age')
         fintechUser.sex = request.POST.get('sex').lower()
         fintechUser.occupation = request.POST.get('occupation').lower()
+        fintechUser.yearly_income = request.POST.get('yearly_income')
 
         fintechUser.save()
 
@@ -213,6 +216,44 @@ def get_gain(request):
         return render(request, 'assetman/gain.html', context)
     
     return render(request, 'assetman/gainform.html', {})
+
+# handle expenses view and form page
+@login_required(login_url='/login')
+def expenses(request) :
+    context = {
+        'categories': ExpenseCategory.objects.all(),
+        'today': datetime.datetime.today
+    }
+
+
+    if request.method == 'GET':
+        expenses = Expense.objects.filter(FK_user_expense=request.user)
+
+        if request.GET.get('filter_date') is not None:
+            expenses = expenses.filter(date=request.GET.get('filter_date'))
+
+        context['expenses'] = expenses.order_by('-date')
+
+        total = 0
+        for exp in expenses:
+            total += exp.amount
+        
+        context['total'] = total
+
+    if request.method == 'POST':
+        expenseArgs= {
+            'FK_user_expense': request.user,
+            'amount': request.POST.get('amount'),
+            'category': ExpenseCategory.objects.get(pk=request.POST.get('category')),
+            'date': request.POST.get('date'),
+            'description': request.POST.get('description')
+        }
+
+        update_model(Expense(), expenseArgs)
+
+        return redirect('/assets/expense')
+
+    return render(request, 'assetman/expense.html', context)
 
 def get_agent_id(request) :
     

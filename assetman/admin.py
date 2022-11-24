@@ -16,4 +16,5 @@ admin.site.register(CurrentHoldings)
 admin.site.register(UserTrade)
 admin.site.register(FintechUser)
 admin.site.register(MortgageRate)
-
+admin.site.register(Expense)
+admin.site.register(ExpenseCategory)

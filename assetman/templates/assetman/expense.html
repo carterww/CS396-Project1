@@ -1,0 +1,99 @@
+{% load static %}
+{% load humanize %}
+
+<!DOCTYPE html>
+<html lang="en" style="background-color:black; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Asset Management</title>
+    <link rel="stylesheet" href="{% static 'assetman/style.css' %}">
+    <!--<link rel="icon" type="image/ico" href="{% static 'fintech/mainico.ico' %}">-->
+  </head>
+  <body style="margin:0px">
+    <header>
+        <div>
+            <ul class="navbar">
+                <li><a href="/assets/">Assets</a></li>
+                {% if request.user.is_authenticated %}
+                <li style="float:right">
+                    <a href="{% url 'fintech:logout' %}">Logout</a>
+                </li>
+                <li style="float:right">
+                    <a href="/assets/account/">Account Settings</a>
+                </li>
+                {% else %}
+                <li style="float:right">
+                    <a href="{% url 'fintech:login' %}">Login</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </header>
+
+    <div class="topic">
+        <form method="POST" action="/assets/expense/" id="form">
+            {% csrf_token %}
+            <div style="text-align:center">
+                <label class="topicheader" for="category" style="font-size:20px">Expense Category</label>
+                <select class="select-container" name="category" form="form" required>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}">{{ cat.category_name|capfirst }}</option>
+                    {% endfor %}
+                </select>
+                <br>
+                <br>
+                <label class="topicheader" for="amount" style="font-size:20px">Amount</label>
+                <input class="textinput" name="amount" type="number" step="0.01" required>
+                <br>
+                <br>
+                <label class="topicheader" for="date" style="font-size:20px">Date</label>
+                <input class="textinput" name="date" type="date" value="{{ today|date:'Y-m-d' }}" required>
+                <br>
+                <br>
+                <label class="topicheader" for="description" style="font-size:20px">Description</label>
+                <input class="textinput" name="text" type="description" maxlength="45">
+            </div>
+            
+            <div style="text-align:center; padding-bottom:15px; padding-top:15px">
+                <button class="form-button" type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+    <div class="topic" style="width:80%; padding:50px">
+        <form method="GET" action="/assets/expense/" id="filter">
+            <label class="topicheader" for="filter_date" style="font-size:20px; margin-left:5%">Expense Category</label>
+            <input class="textinput" name="filter_date" type="date">
+
+            <div style="text-align:center; padding-bottom:15px; padding-top:15px">
+                <button class="form-button" type="submit">Filter</button>
+            </div>
+        </form>
+        <h1 class="header">Expenses</h1>
+        {% if expenses %}
+        <table>
+            <tr>
+                <th>Expense Category</th>
+                <th>Amount</th>
+                <th>Description</th>
+                <th>Date</th>
+            </tr>
+            {% for exp in expenses %}
+                <tr>
+                    <td>{{ exp.category.category_name|capfirst }}</td>
+                    <td>${{ exp.amount|intcomma }}</td>
+                    <td>{{ exp.description|slice:'24' }}</td>
+                    <td>{{ exp.date }}</td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td>TOTAL:</td>
+                <td>${{ total|intcomma }}</td>
+                <td></td>
+            </tr>
+        </table>
+        {% endif %}
+    </div>
+</body>
+</html>

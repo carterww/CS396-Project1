@@ -17,5 +17,6 @@ urlpatterns = [
     path('mortgagerates/', views.mortgagerates, name='mortgageRates'),
     path('gain/', views.get_gain, name='calculateGain'),
     path('account/', views.account_settings, name='accountSettings'),
-    path('stock/', views.get_stock, name='getStock')
+    path('stock/', views.get_stock, name='getStock'),
+    path('expense/', views.expenses, name='expenses')
 ]

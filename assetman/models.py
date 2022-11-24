@@ -100,6 +100,7 @@ class FintechUser(models.Model):
     age = models.SmallIntegerField(null=False)
     sex = models.CharField(max_length=1, null=False)
     occupation = models.CharField(max_length=255, null=False)
+    yearly_income = models.DecimalField(max_digits=11, decimal_places=2, null=True)
     FK_address_assetUser = models.ForeignKey(Address, on_delete= models.CASCADE, null=True)
     FK_user_assetUser = models.ForeignKey(User, on_delete= models.CASCADE,  null=False, primary_key=True)
 
@@ -110,3 +111,16 @@ class MortgageRate(models.Model) :
     def __str__(self) :
         rate = f'{self.interestRate:.3f}'
         return '%s: %s' % (self.bankName, rate)
+
+class Expense(models.Model):
+    FK_user_expense = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    amount = models.DecimalField(max_digits=11, decimal_places=2, null=False)
+    category = models.ForeignKey('ExpenseCategory', on_delete=models.RESTRICT, null=False)
+    date = models.DateField(default=now)
+    description = models.TextField(null=True)
+
+class ExpenseCategory(models.Model):
+    category_name = models.CharField(max_length=255, null=False)
+
+    def __str__(self):
+        return self.category_name
