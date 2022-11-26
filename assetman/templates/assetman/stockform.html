@@ -36,13 +36,21 @@
             <label class="textinput-label" for="ticker">Stock Ticker</label>
             <input class="textinput" type="text" name="ticker">
 
-            <label class="textinput-label" for="date">Date</label>
-            <input class="textinput" type="date" name="date">
+            <label class="textinput-label" for="date_begin">Begin Date</label>
+            <input class="textinput" type="date" name="date_begin">
+
+            <label class="textinput-label" for="date_end">End Date</label>
+            <input class="textinput" type="date" name="date_end">
 
             <div style="text-align:center; padding-bottom:15px; padding-top:15px">
                 <button class="form-button" type="submit" name="submit_post">Submit</button>
             </div>
         </form>
+        {% if image %}
+            <div style="text-align:center">
+                <img src="{{ image }}">
+            </div>
+        {% endif %}
     </div>
 
 </body>

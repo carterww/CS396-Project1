@@ -1,7 +1,14 @@
 from ctypes import sizeof
 import datetime
 import yfinance as yf
+import pandas as pd
+import pandas_datareader.data as pdr
+yf.pdr_override()
 import schedule
+from sklearn import linear_model
+import matplotlib as mpl
+mpl.use('Agg')
+import matplotlib.pyplot as plt
 from django.shortcuts import render
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
@@ -307,16 +314,37 @@ def get_stock(request) :
 
     if request.method == 'POST':
         stock = None
-        snapShot = None
+        form_begin = datetime.datetime.strptime(request.POST.get('date_begin'), '%Y-%m-%d').date()
+        data_begin = (form_begin - datetime.timedelta(days=70)).strftime('%Y-%m-%d')
         try :
-            stock = Stock.objects.get(ticker=request.POST.get('ticker').upper())
-            snapShot = StockSnapshot.objects.get(FK_stock_snapshot=stock, snapshotDate=request.POST.get('date'))
-            context['stock'] = stock
-            context['snapShot'] = snapShot
+            stock = pdr.get_data_yahoo(request.POST.get('ticker'), data_begin, request.POST.get('date_end'))
         except :
-            0
-        context['date'] = request.POST.get('date')
-        return render(request, 'assetman/stock.html', context)
+            return Http404()
+        
+        if stock is not None :
+            closes = stock["Close"]
+            stock["SMA"] = closes.rolling(window=50).mean()
+            end_of_dates = 0
+            for day in stock.index :
+                if day.date() >= form_begin :
+                    break
+                end_of_dates += 1
+            stock = stock.iloc[end_of_dates:]
+            fig, g = plt.subplots()
+            g.plot(stock.reset_index().Date, stock['Close'], label="Close Price")
+            g.plot(stock.reset_index().Date, stock['SMA'], label="50 Day Simple Moving Average", color="red")
+            g.set_title(request.POST.get('ticker').upper() + ' ' + request.POST.get('date_begin') + ' to ' + request.POST.get('date_end'))
+            g.set_xlabel('Date')
+            g.set_ylabel('Price Per Share ($)')
+            g.xaxis.set_major_formatter(mpl.dates.DateFormatter('%b %Y'))
+            g.set_xticks(g.get_xticks()[::2])
+            g.legend()
+            #graph = stock.reset_index().plot(x="Date", y="Close", kind="line")
+            #plt.plot(stock["SMA"], label="SMA")
+            
+            #fig = plt.gcf()
+            fig.savefig(settings.MEDIA_ROOT + '/' + request.POST.get('ticker') + request.POST.get('date_begin') + request.POST.get('date_end') + '.png')
+            context['image'] = '/media/' + request.POST.get('ticker') + request.POST.get('date_begin') + request.POST.get('date_end') + '.png'
 
     return render(request, 'assetman/stockform.html', context)
 
