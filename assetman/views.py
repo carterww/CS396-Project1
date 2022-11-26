@@ -1,5 +1,7 @@
 from ctypes import sizeof
 import datetime
+import yfinance as yf
+import schedule
 from django.shortcuts import render
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
@@ -7,10 +9,15 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
+from django.http import FileResponse
+from django.core.files.storage import FileSystemStorage
+
 
 from .models import *
 from .joinedmodels import *
 from .helpviews import *
+import os
 
 # Create your views here.
 
@@ -217,6 +224,15 @@ def get_gain(request):
     
     return render(request, 'assetman/gainform.html', {})
 
+def display_images(request, image_url) :
+    # open file
+    try :
+        img = open(image_url, 'rb')
+    except Exception :
+        raise Http404("This image does not exist")
+    # return file
+    return FileResponse(img)
+
 # handle expenses view and form page
 @login_required(login_url='/login')
 def expenses(request) :
@@ -229,8 +245,15 @@ def expenses(request) :
     if request.method == 'GET':
         expenses = Expense.objects.filter(FK_user_expense=request.user)
 
-        if request.GET.get('filter_date') is not None:
-            expenses = expenses.filter(date=request.GET.get('filter_date'))
+        if request.GET.get('filter_year') is not None:
+            if request.GET.get('filter_year') != '':
+                expenses = expenses.filter(date__year=request.GET.get('filter_year'))
+        if request.GET.get('filter_month') is not None:
+            if request.GET.get('filter_month') != '':
+                expenses = expenses.filter(date__month=request.GET.get('filter_month'))
+        if request.GET.get('filter_day') is not None:
+            if request.GET.get('filter_day') != '':
+                expenses = expenses.filter(date__day=request.GET.get('filter_day'))
 
         context['expenses'] = expenses.order_by('-date')
 
@@ -240,6 +263,8 @@ def expenses(request) :
         
         context['total'] = total
 
+        context['image'] = make_expense_pie_chart(context['expenses'], request.user)
+
     if request.method == 'POST':
         expenseArgs= {
             'FK_user_expense': request.user,
@@ -248,7 +273,6 @@ def expenses(request) :
             'date': request.POST.get('date'),
             'description': request.POST.get('description')
         }
-
         update_model(Expense(), expenseArgs)
 
         return redirect('/assets/expense')

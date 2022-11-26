@@ -53,7 +53,7 @@
                 <br>
                 <br>
                 <label class="topicheader" for="description" style="font-size:20px">Description</label>
-                <input class="textinput" name="text" type="description" maxlength="45">
+                <input class="textinput" name="description" type="text" maxlength="45">
             </div>
             
             <div style="text-align:center; padding-bottom:15px; padding-top:15px">
@@ -63,13 +63,20 @@
     </div>
     <div class="topic" style="width:80%; padding:50px">
         <form method="GET" action="/assets/expense/" id="filter">
-            <label class="topicheader" for="filter_date" style="font-size:20px; margin-left:5%">Expense Category</label>
-            <input class="textinput" name="filter_date" type="date">
+            <label class="topicheader" for="filter_year" style="font-size:20px; margin-left:5%">Year</label>
+            <input class="textinput" name="filter_year" type="number">
+            <label class="topicheader" for="month" style="font-size:20px; margin-left:5%">Month</label>
+            <input class="textinput" name="filter_month" type="number">
+            <label class="topicheader" for="filter_day" style="font-size:20px; margin-left:5%">Day</label>
+            <input class="textinput" name="filter_day" type="number">
 
             <div style="text-align:center; padding-bottom:15px; padding-top:15px">
                 <button class="form-button" type="submit">Filter</button>
             </div>
         </form>
+        <div style="text-align:center; padding-bottom:15px; padding-top:15px">
+            <a href="/assets/expense/"><button class="form-button" type="button">Reset Filter</button></a>
+        </div>
         <h1 class="header">Expenses</h1>
         {% if expenses %}
         <table>
@@ -83,7 +90,11 @@
                 <tr>
                     <td>{{ exp.category.category_name|capfirst }}</td>
                     <td>${{ exp.amount|intcomma }}</td>
-                    <td>{{ exp.description|slice:'24' }}</td>
+                    {% if exp.description == '' or exp.description is None %}
+                        <td>None</td>
+                    {% else %}
+                        <td>{{ exp.description|slice:'24' }}</td>
+                    {% endif %}
                     <td>{{ exp.date }}</td>
                 </tr>
             {% endfor %}
@@ -94,6 +105,9 @@
             </tr>
         </table>
         {% endif %}
+        <div style="text-align:center">
+            <img src="{{ image }}">
+        </div>
     </div>
 </body>
 </html>

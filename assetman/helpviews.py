@@ -1,8 +1,47 @@
 from .models import *
 from .joinedmodels import *
 
+from django.conf import settings
+
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+import matplotlib as mpl
+mpl.use('Agg')
+import matplotlib.pyplot as plot
+
+def make_expense_pie_chart(expenses, user) :
+    labels_and_values = {}
+    running_total = 0
+    labelz = []
+
+    for exp in expenses :
+        running_total += exp.amount
+        try :
+            labels_and_values[exp.category.category_name] = labels_and_values[exp.category.category_name] + exp.amount
+        except:
+            labels_and_values[exp.category.category_name] = exp.amount
+
+    for key in labels_and_values :
+        label = key.capitalize()
+        label += ' ' + f'(${labels_and_values[key]:,})'
+        labelz.append(label)
+
+    for key, value in labels_and_values.items():
+        labels_and_values[key] = value / running_total
+
+    fig1, ax1 = plot.subplots()
+    wedges, _ = ax1.pie(labels_and_values.values(), labels=labelz, shadow=True)
+    ax1.axis('equal')
+    ax1.set_title('Expense Breakdown for ' + user.username)
+
+    for w in wedges:
+        w.set_linewidth(.5)
+        w.set_edgecolor('black')
+
+    fig1.savefig(settings.MEDIA_ROOT + '/' + user.username + 'piechart.png')
+
+    return  '/media/' + user.username + 'piechart.png'
+
 
 def handle_add_stock(request):
     asset = None
