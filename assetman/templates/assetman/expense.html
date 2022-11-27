@@ -77,7 +77,11 @@
         <div style="text-align:center; padding-bottom:15px; padding-top:15px">
             <a href="/assets/expense/"><button class="form-button" type="button">Reset Filter</button></a>
         </div>
+        <h3 class="topicheader"><a href="/assets/expense/bar/"  style="color:crimson">View Expense Breakdown as Bar Chart</a></h3>
         <h1 class="header">Expenses</h1>
+        {% if exceed %}
+            <h1 class="header" style="color:red">WARNING: YOUR MONTHLY EXPENSES ${{ month_expense_total|intcomma }} EXCEEDS YOUR MONTHLY INCOME OF ${{ monthly_income|floatformat:2|intcomma }}!</h1>
+        {% endif %}
         {% if expenses %}
         <table>
             <tr>
@@ -107,6 +111,9 @@
         {% endif %}
         <div style="text-align:center">
             <img src="{{ image }}">
+        </div>
+        <div style="text-align:center">
+            <img src="{{ SMA }}">
         </div>
     </div>
 </body>

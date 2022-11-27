@@ -102,7 +102,7 @@ class FintechUser(models.Model):
     occupation = models.CharField(max_length=255, null=False)
     yearly_income = models.DecimalField(max_digits=11, decimal_places=2, null=True)
     FK_address_assetUser = models.ForeignKey(Address, on_delete= models.CASCADE, null=True)
-    FK_user_assetUser = models.ForeignKey(User, on_delete= models.CASCADE,  null=False, primary_key=True)
+    FK_user_assetUser = models.ForeignKey(User, on_delete= models.CASCADE,  null=False, primary_key=True, related_name='fintechuser')
 
 class MortgageRate(models.Model) :
     bankName = models.CharField(max_length=255, null=False, unique=True)

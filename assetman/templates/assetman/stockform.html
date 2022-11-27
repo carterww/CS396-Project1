@@ -30,7 +30,7 @@
             </ul>
         </div>
     </header>
-    <div class="topic">
+    <div class="topic" style="padding: 20px 200px">
         <form method="post" action="">
             {% csrf_token %}
             <label class="textinput-label" for="ticker">Stock Ticker</label>
@@ -42,6 +42,15 @@
             <label class="textinput-label" for="date_end">End Date</label>
             <input class="textinput" type="date" name="date_end">
 
+            <label class="textinput-label" for="open">Open Price</label>
+            <input class="textinput" type="number" name="open" step="0.01">
+
+            <label class="textinput-label" for="high">High Price</label>
+            <input class="textinput" type="number" name="high" step="0.01">
+
+            <label class="textinput-label" for="low">Low Price</label>
+            <input class="textinput" type="number" name="low" step="0.01">
+
             <div style="text-align:center; padding-bottom:15px; padding-top:15px">
                 <button class="form-button" type="submit" name="submit_post">Submit</button>
             </div>
@@ -50,6 +59,24 @@
             <div style="text-align:center">
                 <img src="{{ image }}">
             </div>
+        {% endif %}
+        {% if open %}
+        <h1 class="header">Predicted Close Price</h1>
+        <h1 class="header">Using Historical Price in Date Range</h1>
+        <table>
+            <tr>
+                <th>Open Price</th>
+                <th>Low Price</th>
+                <th>High Price</th>
+                <th>Predicted Close</th>
+            </tr>
+            <tr>
+                <td>${{ open|floatformat:2 }}</td>
+                <td>${{ high|floatformat:2 }}</td>
+                <td>${{ low|floatformat:2 }}</td>
+                <td>${{ close|floatformat:2 }}</td>
+            </tr>
+        </table>
         {% endif %}
     </div>
 

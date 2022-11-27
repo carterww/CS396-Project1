@@ -5,9 +5,79 @@ from django.conf import settings
 
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+import pandas as pd
 import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plot
+
+def expense_SMA(expenses, user):
+    data = {}
+    for exp in expenses:
+        try :
+            data[exp.date] = data[exp.date] + exp.amount
+        except :
+            data[exp.date] = exp.amount
+
+    window = len(data)
+    if window >= 300 :
+        window = 50
+    elif window >= 100 :
+        window = 20
+    elif window >= 10 :
+        window = 5
+    else :
+        window = 2
+
+    values = pd.Series(data.values(), copy=False)
+    values = values.rolling(window=window).mean()
+    fig, g = plot.subplots()
+    
+    g.plot(data.keys(), values, label=f"{window} Day Simple Moving Average", color="red")
+    g.set_title(f'Simple Moving Average of {user.username}\'s Expenditures')
+    g.set_xlabel('Date')
+    g.set_ylabel('Amount ($)')
+    g.xaxis.set_major_formatter(mpl.dates.DateFormatter('%b %Y'))
+    g.set_xticks(g.get_xticks()[::2])
+    g.legend()
+    #graph = stock.reset_index().plot(x="Date", y="Close", kind="line")
+    #plt.plot(stock["SMA"], label="SMA")
+    
+    #fig = plt.gcf()
+    fig.savefig(settings.MEDIA_ROOT + '/' + user.username  + 'expensesma' + '.png')
+    return  '/media/' + user.username  + 'expensesma' + '.png'
+
+def make_income_and_expense_bar_graph(expenses, year_income, user) :
+    labels_and_values = {
+        'income': year_income,
+    }
+    running_total = 0
+    labelz = []
+    colors = ['blue', 'red', 'green', 'yellow', 'cyan', 'black', 'gray', 'purple', 'brown', 'orange', 'olive', 'pink']
+
+    for exp in expenses :
+        running_total += exp.amount
+    labels_and_values['expenses'] = running_total
+    labels_and_values['assets'] = get_total_asset_value(user)
+
+    i = 0
+    for key in labels_and_values :
+        label = key.capitalize()
+        labelz.append(label)
+        i += 1
+    
+    colors = colors[0:i]
+
+    fig, ax = plot.subplots()
+    ax.set_title(f'Income, Expenses, and Assets for {user.username}')
+    ax.set_ylabel('Total Amount ($)')
+    ax.set_xlabel('Category')
+    bars = ax.bar(labelz, labels_and_values.values(), color=colors)
+
+    ax.bar_label(bars)
+    fig.set_size_inches(12, 7)
+    fig.savefig(settings.MEDIA_ROOT + '/' + user.username + 'barchart.png')
+
+    return  '/media/' + user.username + 'barchart.png'
 
 def make_expense_pie_chart(expenses, user) :
     labels_and_values = {}
@@ -30,7 +100,7 @@ def make_expense_pie_chart(expenses, user) :
         labels_and_values[key] = value / running_total
 
     fig1, ax1 = plot.subplots()
-    wedges, _ = ax1.pie(labels_and_values.values(), labels=labelz, shadow=True)
+    wedges, plt_labels, junk = ax1.pie(labels_and_values.values(), labels=labelz, autopct='%1.1f%%', shadow=True)
     ax1.axis('equal')
     ax1.set_title('Expense Breakdown for ' + user.username)
 
@@ -392,3 +462,27 @@ def calculate_gain(user, date_begin, date_end) :
     if purchase_price == 0 :
         return 0, 0
     return gain, (gain / purchase_price * 100)
+
+
+def get_total_asset_value(user):
+    userTrades = UserTrade.objects.filter(FK_user=user)
+
+    buys = {}
+    amount = 0
+
+    for ut in userTrades :
+        if (ut.FK_trade.action == 'B') :
+            buys[ut.FK_trade.id] = ut.FK_trade
+            continue
+        else :
+            try :
+                trade = buys[ut.FK_trade.FK_trade.id]
+            except:
+                continue
+            if (trade.id == ut.FK_trade.FK_trade.id) :
+                del buys[ut.FK_trade.FK_trade.id]
+    
+    for key, value in buys.items() :
+        amount += (float((value.pricePerAsset)) * float((value.assetQuantity)))
+
+    return float(amount)

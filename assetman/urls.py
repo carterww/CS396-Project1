@@ -18,5 +18,6 @@ urlpatterns = [
     path('gain/', views.get_gain, name='calculateGain'),
     path('account/', views.account_settings, name='accountSettings'),
     path('stock/', views.get_stock, name='getStock'),
-    path('expense/', views.expenses, name='expenses')
+    path('expense/', views.expenses, name='expenses'),
+    path('expense/bar/', views.income_bar_graph, name='bargraph'),
 ]

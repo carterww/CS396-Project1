@@ -1,6 +1,9 @@
+import array
 from ctypes import sizeof
 import datetime
+import random
 import yfinance as yf
+import numpy as np
 import pandas as pd
 import pandas_datareader.data as pdr
 yf.pdr_override()
@@ -24,7 +27,6 @@ from django.core.files.storage import FileSystemStorage
 from .models import *
 from .joinedmodels import *
 from .helpviews import *
-import os
 
 # Create your views here.
 
@@ -39,7 +41,6 @@ def home(request):
         'bonds': heldBonds,
         'misc': heldMiscAssets,
     }
-
     return render(request, 'assetman/home.html', context)
 
 @login_required(login_url='/login')
@@ -240,6 +241,58 @@ def display_images(request, image_url) :
     # return file
     return FileResponse(img)
 
+@login_required(login_url='/login')
+def income_bar_graph(request):
+    context = {
+        'income': get_object_or_404(FintechUser, FK_user_assetUser=request.user).yearly_income, 
+    }
+
+    if request.method == 'GET':
+        expenses = Expense.objects.filter(FK_user_expense=request.user)
+        context['date_context'] = 'Year'
+
+        if request.GET.get('filter_year') is not None:
+            if request.GET.get('filter_year') != '':
+                expenses = expenses.filter(date__year=request.GET.get('filter_year'))
+        if request.GET.get('filter_month') is not None:
+            if request.GET.get('filter_month') != '':
+                context['income'] = context['income'] / 12
+                context['date_context'] = 'Month'
+                expenses = expenses.filter(date__month=request.GET.get('filter_month'))
+
+        if request.GET.get('filter_year') is None :
+            expenses = expenses.filter(date__year=datetime.datetime.now().year)
+
+        context['image'] = make_income_and_expense_bar_graph(expenses, context['income'], request.user)
+
+        model = linear_model.LinearRegression()
+        x = []
+        y = []
+        income_as_f = float(context['income'])
+        for i in range(0, 20) :
+            if random.random() <= .15:
+                x.append(random.uniform(income_as_f / 4, income_as_f * 4))
+            else :
+                x.append(random.uniform(income_as_f / 2, income_as_f * 2))
+            y.append(random.uniform(x[i] / 2, x[i]))
+        model.fit(np.array(x).reshape(-1, 1), y)
+
+        context['predict'] = model.predict(np.array([context['income']]).reshape(-1, 1))
+
+        fig, ax = plt.subplots()
+        ax.scatter(x, y, color="Black", label="User Data")
+        ax.plot(x, model.predict(np.array(x).reshape(-1, 1)), label="Regression Line", color="red")
+        ax.set_xlabel('Income ($)')
+        ax.set_ylabel('Total Expenses ($)')
+        ax.set_title('Linear Model for Income and Expenses')
+        ax.legend()
+        fig.set_size_inches(10, 6)
+            
+        fig.savefig(settings.MEDIA_ROOT + '/' + request.user.username + 'expreg' + '.png')
+        context['reg'] = '/media/' + request.user.username + 'expreg' + '.png'
+
+
+    return render(request, 'assetman/expensebarchart.html', context)
 # handle expenses view and form page
 @login_required(login_url='/login')
 def expenses(request) :
@@ -248,9 +301,22 @@ def expenses(request) :
         'today': datetime.datetime.today
     }
 
-
     if request.method == 'GET':
+        monthly_income = get_object_or_404(FintechUser, FK_user_assetUser=request.user).yearly_income / 12
+        now = datetime.datetime.now().date()
+
         expenses = Expense.objects.filter(FK_user_expense=request.user)
+
+        month_expenses = expenses.filter(date__year=now.year, date__month=now.month)
+
+        month_expense_total = 0
+        for exp in month_expenses:
+            month_expense_total += exp.amount
+
+        if month_expense_total > monthly_income :
+            context['exceed'] = True
+            context['monthly_income'] = monthly_income
+            context['month_expense_total'] = month_expense_total
 
         if request.GET.get('filter_year') is not None:
             if request.GET.get('filter_year') != '':
@@ -271,6 +337,7 @@ def expenses(request) :
         context['total'] = total
 
         context['image'] = make_expense_pie_chart(context['expenses'], request.user)
+        context['SMA'] = expense_SMA(context['expenses'], request.user)
 
     if request.method == 'POST':
         expenseArgs= {
@@ -330,6 +397,19 @@ def get_stock(request) :
                     break
                 end_of_dates += 1
             stock = stock.iloc[end_of_dates:]
+
+            if request.POST.get('open') != '' and request.POST.get('high') != '' and request.POST.get('low') != '' :
+                y = stock['Close']
+                x = stock[['Open', 'High', 'Low']]
+
+                model = linear_model.LinearRegression()
+                model.fit(x, y)
+                fictional_x = [[float(request.POST.get('open')), float(request.POST.get('high')), float(request.POST.get('low'))]]
+                context['open'] = request.POST.get('open')
+                context['high'] = request.POST.get('high')
+                context['low'] = request.POST.get('low')
+                context['close'] = model.predict(fictional_x)
+
             fig, g = plt.subplots()
             g.plot(stock.reset_index().Date, stock['Close'], label="Close Price")
             g.plot(stock.reset_index().Date, stock['SMA'], label="50 Day Simple Moving Average", color="red")
@@ -339,12 +419,9 @@ def get_stock(request) :
             g.xaxis.set_major_formatter(mpl.dates.DateFormatter('%b %Y'))
             g.set_xticks(g.get_xticks()[::2])
             g.legend()
-            #graph = stock.reset_index().plot(x="Date", y="Close", kind="line")
-            #plt.plot(stock["SMA"], label="SMA")
             
-            #fig = plt.gcf()
-            fig.savefig(settings.MEDIA_ROOT + '/' + request.POST.get('ticker') + request.POST.get('date_begin') + request.POST.get('date_end') + '.png')
-            context['image'] = '/media/' + request.POST.get('ticker') + request.POST.get('date_begin') + request.POST.get('date_end') + '.png'
+            fig.savefig(settings.MEDIA_ROOT + '/' + request.POST.get('ticker') + request.user.username + '.png')
+            context['image'] = '/media/' + request.POST.get('ticker') + request.user.username + '.png'
 
     return render(request, 'assetman/stockform.html', context)
 
